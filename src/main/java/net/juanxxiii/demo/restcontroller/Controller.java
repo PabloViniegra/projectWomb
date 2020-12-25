@@ -1,6 +1,7 @@
 package net.juanxxiii.demo.restcontroller;
 
 import net.juanxxiii.demo.database.entities.Countries;
+import net.juanxxiii.demo.database.entities.Users;
 import net.juanxxiii.demo.services.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,5 +34,47 @@ public class Controller {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    //Users Mapping
+    @GetMapping("/users")
+    public ResponseEntity<List<Users>> getUsersList() {
+        return ResponseEntity.ok(queryService.getUsersList());
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<?> getUser(@PathVariable("id") int id) {
+        Users user = queryService.getUser(id);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/users")
+    public ResponseEntity<?> newUser(@RequestBody Users newuser) {
+        Users user = queryService.saveUser(newuser);
+        if (user != null) {
+            return ResponseEntity.ok(newuser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/users/{id}")
+    public ResponseEntity<?> updateUsers(@RequestBody Users newuser, @PathVariable("id") int id) {
+        int user = queryService.updateUsers(newuser, id);
+        if (user != -1) {
+            return ResponseEntity.ok("User updated");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<?> deleteUsers(@PathVariable("id") int id) {
+        queryService.deleteUser(id);
+        return ResponseEntity.ok("User deleted");
     }
 }
