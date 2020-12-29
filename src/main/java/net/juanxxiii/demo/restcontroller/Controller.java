@@ -1,9 +1,6 @@
 package net.juanxxiii.demo.restcontroller;
 
-import net.juanxxiii.demo.database.entities.Categories;
-import net.juanxxiii.demo.database.entities.Countries;
-import net.juanxxiii.demo.database.entities.Products;
-import net.juanxxiii.demo.database.entities.Users;
+import net.juanxxiii.demo.database.entities.*;
 import net.juanxxiii.demo.services.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -163,4 +160,57 @@ public class Controller {
         queryService.deleteProduct(id);
         return ResponseEntity.ok("product deleted");
     }
+
+    //Brand Mapping
+    @GetMapping("/brand")
+    public ResponseEntity<List<Brand>> getBrandList() {
+        return ResponseEntity.ok(queryService.getBrandList());
+    }
+
+    @GetMapping("/brand/{id}")
+    public ResponseEntity<?> getBrand(@PathVariable("id") int id) {
+        Brand brand = queryService.getBrand(id);
+        if (brand != null) {
+            return ResponseEntity.ok(brand);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/brand/name/{name}")
+    public ResponseEntity<?> getBrandByName(@PathVariable("name") String name) {
+        Brand brand = queryService.getBrandByName(name);
+        if (brand != null) {
+            return ResponseEntity.ok(brand);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/brand")
+    public ResponseEntity<?> newBrand(@RequestBody Brand newBrand) {
+        Brand brand = queryService.saveBrand(newBrand);
+        if (brand != null) {
+            return ResponseEntity.ok(brand);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/brand/{id}")
+    public ResponseEntity<?> updateBrand(@RequestBody Brand newBrand, @PathVariable("id") int id) {
+        int brandrequest = queryService.updateBrand(newBrand, id);
+        if (brandrequest != -1) {
+            return ResponseEntity.ok("brand updated");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/brand/{id}")
+    public ResponseEntity<?> deleteBrand(@PathVariable("id") int id) {
+        queryService.deleteBrand(id);
+        return ResponseEntity.ok("brand deleted");
+    }
+
 }

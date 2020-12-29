@@ -21,7 +21,8 @@ public class Products {
     @Column(name = "image")
     private String image;
 
-    @ManyToOne(optional = false)
+    @org.springframework.data.annotation.Transient
+    @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "idcategory", referencedColumnName = "idcategory")
     private Categories category;
 }

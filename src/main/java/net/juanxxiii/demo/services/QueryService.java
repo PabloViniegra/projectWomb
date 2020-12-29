@@ -1,16 +1,11 @@
 package net.juanxxiii.demo.services;
 
 import lombok.extern.java.Log;
-import net.juanxxiii.demo.database.entities.Categories;
-import net.juanxxiii.demo.database.entities.Countries;
-import net.juanxxiii.demo.database.entities.Products;
-import net.juanxxiii.demo.database.entities.Users;
-import net.juanxxiii.demo.database.repositories.CategoriesRepository;
-import net.juanxxiii.demo.database.repositories.CountriesRepository;
-import net.juanxxiii.demo.database.repositories.ProductsRepository;
-import net.juanxxiii.demo.database.repositories.UsersRepository;
+import net.juanxxiii.demo.database.entities.*;
+import net.juanxxiii.demo.database.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,16 +18,19 @@ public class QueryService {
     private final UsersRepository usersRepository;
     private final CategoriesRepository categoriesRepository;
     private final ProductsRepository productsRepository;
+    private final BrandRepository brandRepository;
 
     @Autowired
     public QueryService(CountriesRepository countriesRepository,
                         UsersRepository usersRepository,
                         CategoriesRepository categoriesRepository,
-                        ProductsRepository productsRepository) {
+                        ProductsRepository productsRepository,
+                        BrandRepository brandRepository) {
         this.countriesRepository = countriesRepository;
         this.usersRepository = usersRepository;
         this.categoriesRepository = categoriesRepository;
         this.productsRepository = productsRepository;
+        this.brandRepository = brandRepository;
     }
 
     public List<Countries> getCountriesList() {
@@ -135,5 +133,61 @@ public class QueryService {
             }
             return productsRepository.updateProduct(product.getName(),product.getImage(), product.getId());
         }).orElse(-1);
+    }
+
+    public List<Brand> getBrandList() {
+        return brandRepository.findAll();
+    }
+
+    public Brand getBrand(int id) {
+        return brandRepository.findById(id).orElse(null);
+    }
+
+    public Brand getBrandByName(String name) {
+        return brandRepository.getBrandByName(name);
+    }
+    @Transactional
+    public Brand saveBrand(Brand newBrand) {
+        List<Products> myproducts = null;
+        if (!newBrand.getProduct().isEmpty()) {
+            myproducts = newBrand.getProduct();
+        }
+        brandRepository.save(newBrand);
+        int id = brandRepository.lastID();
+        if (myproducts != null) {
+            myproducts.forEach(products -> {
+                products.setId(id);
+                productsRepository.save(products);
+            });
+        }
+        return brandRepository.findById(id).orElse(null);
+    }
+
+    public int updateBrand(Brand newBrand, int id) {
+        return brandRepository.findById(id).map(brand -> {
+            List<Products> myproducts = brand.getProduct();
+            newBrand.getProduct().forEach(p -> {
+                if (!myproducts.contains(p)) {
+                    p.setId(brand.getId());
+                    productsRepository.save(p);
+                }
+            });
+            myproducts.forEach(product -> {
+                if (!newBrand.getProduct().contains(product)) {
+                    productsRepository.deleteById(product.getId());
+                }
+            });
+
+            return brandRepository.updateBrand(brand.getName(), id);
+        }).orElse(-1);
+
+    }
+
+    public void deleteBrand(int id) {
+        brandRepository
+                .delete(Objects
+                        .requireNonNull(brandRepository
+                                .findById(id)
+                                .orElse(null)));
     }
 }
