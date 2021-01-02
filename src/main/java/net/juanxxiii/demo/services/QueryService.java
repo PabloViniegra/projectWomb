@@ -19,18 +19,21 @@ public class QueryService {
     private final CategoriesRepository categoriesRepository;
     private final ProductsRepository productsRepository;
     private final BrandRepository brandRepository;
+    private final WombRepository wombRepository;
 
     @Autowired
     public QueryService(CountriesRepository countriesRepository,
                         UsersRepository usersRepository,
                         CategoriesRepository categoriesRepository,
                         ProductsRepository productsRepository,
-                        BrandRepository brandRepository) {
+                        BrandRepository brandRepository,
+                        WombRepository wombRepository) {
         this.countriesRepository = countriesRepository;
         this.usersRepository = usersRepository;
         this.categoriesRepository = categoriesRepository;
         this.productsRepository = productsRepository;
         this.brandRepository = brandRepository;
+        this.wombRepository = wombRepository;
     }
 
     public List<Countries> getCountriesList() {
@@ -68,7 +71,7 @@ public class QueryService {
                 Countries country = countriesRepository.findById(newuser.getCountry().getId()).orElse(null);
                 newuser.setCountry(country);
             }
-            return usersRepository.updateUser(newuser.getEmail(),newuser.getLastname(), newuser.getName(), newuser.getPassword(), newuser.getUsername(), newuser.getId());
+            return usersRepository.updateUser(newuser.getEmail(), newuser.getLastname(), newuser.getName(), newuser.getPassword(), newuser.getUsername(), newuser.getId());
         }).orElse(-1);
     }
 
@@ -143,7 +146,7 @@ public class QueryService {
                 Brand brand = brandRepository.findById(product.getBrand().getId()).orElse(null);
                 product.setBrand(brand);
             }
-            return productsRepository.updateProduct(product.getName(),product.getImage(), product.getId());
+            return productsRepository.updateProduct(product.getName(), product.getImage(), product.getId());
         }).orElse(-1);
     }
 
@@ -172,4 +175,23 @@ public class QueryService {
     }
 
 
+    public List<Womb> getWombList() {
+        return wombRepository.findAll();
+    }
+
+    public Womb getWomb(int id) {
+        return wombRepository.findById(id).orElse(null);
+    }
+
+    public Womb saveWomb(Womb newwomb) {
+        if (newwomb.getProduct() != null) {
+            Products products = productsRepository.findById(newwomb.getProduct().getId()).orElse(productsRepository.save(newwomb.getProduct()));
+            newwomb.setProduct(products);
+        }
+        if (newwomb.getUser() != null) {
+            Users user = usersRepository.findById(newwomb.getUser().getId()).orElse(usersRepository.save(newwomb.getUser()));
+            newwomb.setUser(user);
+        }
+        return wombRepository.save(newwomb);
+    }
 }

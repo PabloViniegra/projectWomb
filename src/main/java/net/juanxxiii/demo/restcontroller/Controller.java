@@ -209,4 +209,30 @@ public class Controller {
         return ResponseEntity.ok("brand deleted");
     }
 
+    //Womb Mapping
+    @GetMapping("/womb")
+    public ResponseEntity<List<Womb>> getWombList() {
+        return ResponseEntity.ok(queryService.getWombList());
+    }
+
+    @GetMapping("womb/{id}")
+    public ResponseEntity<?> getWomb(@PathVariable("id") int id) {
+        Womb womb = queryService.getWomb(id);
+        if (womb != null) {
+            return ResponseEntity.ok(womb);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/womb")
+    public ResponseEntity<?> newWomb(@RequestBody Womb newwomb) {
+        Womb womb = queryService.saveWomb(newwomb);
+        if (womb != null) {
+            return ResponseEntity.ok(womb);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
