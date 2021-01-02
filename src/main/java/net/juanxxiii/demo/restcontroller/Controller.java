@@ -93,6 +93,11 @@ public class Controller {
         return ResponseEntity.ok(queryService.getCategoriesList());
     }
 
+    @GetMapping("/categories/name/{name}")
+    public ResponseEntity<?> getCategoryByName(@PathVariable("name") String name) {
+        return ResponseEntity.ok(queryService.getCategoryByName(name));
+    }
+
     @GetMapping("/categories/{id}")
     public ResponseEntity<?> getCategory(@PathVariable("id") int id) {
         Categories category = queryService.getCategory(id);
@@ -197,15 +202,6 @@ public class Controller {
         }
     }
 
-    @PutMapping("/brand/{id}")
-    public ResponseEntity<?> updateBrand(@RequestBody Brand newBrand, @PathVariable("id") int id) {
-        int brandrequest = queryService.updateBrand(newBrand, id);
-        if (brandrequest != -1) {
-            return ResponseEntity.ok("brand updated");
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
     @DeleteMapping("/brand/{id}")
     public ResponseEntity<?> deleteBrand(@PathVariable("id") int id) {

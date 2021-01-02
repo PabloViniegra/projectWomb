@@ -23,9 +23,7 @@ public class Brand implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @org.springframework.data.annotation.Transient
-    @OneToMany(targetEntity = Products.class, mappedBy = "idproduct", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<Products> product;
+
 
 
 }

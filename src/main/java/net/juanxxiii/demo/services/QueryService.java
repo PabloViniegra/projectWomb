@@ -89,6 +89,10 @@ public class QueryService {
         return categoriesRepository.findById(id).orElse(null);
     }
 
+    public Categories getCategoryByName(String name) {
+        return categoriesRepository.findCategoryByName(name);
+    }
+
     public Categories saveCategory(Categories newcategory) {
         return categoriesRepository.save(newcategory);
     }
@@ -114,6 +118,10 @@ public class QueryService {
             Categories category = categoriesRepository.findById(newproduct.getCategory().getId()).orElse(categoriesRepository.save(newproduct.getCategory()));
             newproduct.setCategory(category);
         }
+        if (newproduct.getBrand() != null) {
+            Brand brand = brandRepository.findById(newproduct.getBrand().getId()).orElse(brandRepository.save(newproduct.getBrand()));
+            newproduct.setBrand(brand);
+        }
         return productsRepository.save(newproduct);
     }
 
@@ -131,6 +139,10 @@ public class QueryService {
                 Categories categories = categoriesRepository.findById(product.getCategory().getId()).orElse(null);
                 product.setCategory(categories);
             }
+            if (product.getBrand() != null) {
+                Brand brand = brandRepository.findById(product.getBrand().getId()).orElse(null);
+                product.setBrand(brand);
+            }
             return productsRepository.updateProduct(product.getName(),product.getImage(), product.getId());
         }).orElse(-1);
     }
@@ -146,41 +158,9 @@ public class QueryService {
     public Brand getBrandByName(String name) {
         return brandRepository.getBrandByName(name);
     }
-    @Transactional
-    public Brand saveBrand(Brand newBrand) {
-        List<Products> myproducts = null;
-        if (!newBrand.getProduct().isEmpty()) {
-            myproducts = newBrand.getProduct();
-        }
-        brandRepository.save(newBrand);
-        int id = brandRepository.lastID();
-        if (myproducts != null) {
-            myproducts.forEach(products -> {
-                products.setId(id);
-                productsRepository.save(products);
-            });
-        }
-        return brandRepository.findById(id).orElse(null);
-    }
 
-    public int updateBrand(Brand newBrand, int id) {
-        return brandRepository.findById(id).map(brand -> {
-            List<Products> myproducts = brand.getProduct();
-            newBrand.getProduct().forEach(p -> {
-                if (!myproducts.contains(p)) {
-                    p.setId(brand.getId());
-                    productsRepository.save(p);
-                }
-            });
-            myproducts.forEach(product -> {
-                if (!newBrand.getProduct().contains(product)) {
-                    productsRepository.deleteById(product.getId());
-                }
-            });
-
-            return brandRepository.updateBrand(brand.getName(), id);
-        }).orElse(-1);
-
+    public Brand saveBrand(Brand newbrand) {
+        return brandRepository.save(newbrand);
     }
 
     public void deleteBrand(int id) {
@@ -190,4 +170,6 @@ public class QueryService {
                                 .findById(id)
                                 .orElse(null)));
     }
+
+
 }

@@ -23,7 +23,12 @@ public class Products implements Serializable {
     private String image;
 
     @org.springframework.data.annotation.Transient
-    @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "idcategory", referencedColumnName = "idcategory")
     private Categories category;
+
+    @org.springframework.data.annotation.Transient
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "idbrand", referencedColumnName = "idbrand")
+    private Brand brand;
 }
