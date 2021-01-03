@@ -235,4 +235,42 @@ public class Controller {
         }
     }
 
+    @DeleteMapping("/womb/{id}")
+    public ResponseEntity<?> deleteWomb(@PathVariable("id") int id) {
+        queryService.deleteWomb(id);
+        return ResponseEntity.ok("womb deleted");
+    }
+
+    //Commentary Mapping
+    @GetMapping("/commentaries")
+    public ResponseEntity<List<Commentary>> getCommentariesList() {
+        return ResponseEntity.ok(queryService.getCommentariesList());
+    }
+
+    @GetMapping("/commentaries/{id}")
+    public ResponseEntity<?> getCommentary(@PathVariable("id") int id) {
+        Commentary commentary = queryService.getCommentary(id);
+        if (commentary != null) {
+            return ResponseEntity.ok(commentary);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/commentaries")
+    public ResponseEntity<?> newCommentary(@RequestBody Commentary newcommentary) {
+        Commentary commentary = queryService.saveCommentary(newcommentary);
+        if (commentary != null) {
+            return ResponseEntity.ok(commentary);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/commentaries/{id}")
+    public ResponseEntity<?> deleteCommentary(@PathVariable("id") int id) {
+        queryService.deleteCommentary(id);
+        return ResponseEntity.ok("commentary deleted");
+    }
+
 }

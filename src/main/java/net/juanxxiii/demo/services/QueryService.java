@@ -20,6 +20,7 @@ public class QueryService {
     private final ProductsRepository productsRepository;
     private final BrandRepository brandRepository;
     private final WombRepository wombRepository;
+    private final CommentaryRepository commentaryRepository;
 
     @Autowired
     public QueryService(CountriesRepository countriesRepository,
@@ -27,13 +28,15 @@ public class QueryService {
                         CategoriesRepository categoriesRepository,
                         ProductsRepository productsRepository,
                         BrandRepository brandRepository,
-                        WombRepository wombRepository) {
+                        WombRepository wombRepository,
+                        CommentaryRepository commentaryRepository) {
         this.countriesRepository = countriesRepository;
         this.usersRepository = usersRepository;
         this.categoriesRepository = categoriesRepository;
         this.productsRepository = productsRepository;
         this.brandRepository = brandRepository;
         this.wombRepository = wombRepository;
+        this.commentaryRepository = commentaryRepository;
     }
 
     public List<Countries> getCountriesList() {
@@ -193,5 +196,37 @@ public class QueryService {
             newwomb.setUser(user);
         }
         return wombRepository.save(newwomb);
+    }
+
+    public void deleteWomb(int id) {
+        wombRepository
+                .delete(Objects
+                        .requireNonNull(wombRepository
+                                .findById(id)
+                                .orElse(null)));
+    }
+
+    public List<Commentary> getCommentariesList() {
+        return commentaryRepository.findAll();
+    }
+
+    public Commentary getCommentary(int id) {
+        return commentaryRepository.findById(id).orElse(null);
+    }
+
+    public Commentary saveCommentary(Commentary newcommentary) {
+        if (newcommentary.getWomb() != null) {
+            Womb womb = wombRepository.findById(newcommentary.getWomb().getId()).orElse(wombRepository.save(newcommentary.getWomb()));
+            newcommentary.setWomb(womb);
+        }
+        return commentaryRepository.save(newcommentary);
+    }
+
+    public void deleteCommentary(int id) {
+        commentaryRepository
+                .delete(Objects
+                        .requireNonNull(commentaryRepository
+                                .findById(id)
+                                .orElse(null)));
     }
 }
