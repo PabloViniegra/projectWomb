@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -33,4 +35,7 @@ public class Womb implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(name = "idproduct", referencedColumnName = "idproduct")
     private Products product;
+
+    @OneToMany(mappedBy = "womb")
+    List<FavouritesWomb> favouritesWomb;
 }

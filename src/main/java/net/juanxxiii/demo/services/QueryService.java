@@ -21,6 +21,8 @@ public class QueryService {
     private final BrandRepository brandRepository;
     private final WombRepository wombRepository;
     private final CommentaryRepository commentaryRepository;
+    private final FavouritesRepository favouritesRepository;
+    private final FavouritesWombRepository favouritesWombRepository;
 
     @Autowired
     public QueryService(CountriesRepository countriesRepository,
@@ -29,7 +31,9 @@ public class QueryService {
                         ProductsRepository productsRepository,
                         BrandRepository brandRepository,
                         WombRepository wombRepository,
-                        CommentaryRepository commentaryRepository) {
+                        CommentaryRepository commentaryRepository,
+                        FavouritesRepository favouritesRepository,
+                        FavouritesWombRepository favouritesWombRepository) {
         this.countriesRepository = countriesRepository;
         this.usersRepository = usersRepository;
         this.categoriesRepository = categoriesRepository;
@@ -37,6 +41,8 @@ public class QueryService {
         this.brandRepository = brandRepository;
         this.wombRepository = wombRepository;
         this.commentaryRepository = commentaryRepository;
+        this.favouritesRepository = favouritesRepository;
+        this.favouritesWombRepository = favouritesWombRepository;
     }
 
     public List<Countries> getCountriesList() {
@@ -226,6 +232,22 @@ public class QueryService {
         commentaryRepository
                 .delete(Objects
                         .requireNonNull(commentaryRepository
+                                .findById(id)
+                                .orElse(null)));
+    }
+
+    public List<Favourites> getFavouritesList() {
+        return favouritesRepository.findAll();
+    }
+
+    public Favourites getFavourite(int id) {
+        return favouritesRepository.findById(id).orElse(null);
+    }
+
+    public void deleteFavourite(int id) {
+        favouritesRepository
+                .delete(Objects
+                        .requireNonNull(favouritesRepository
                                 .findById(id)
                                 .orElse(null)));
     }

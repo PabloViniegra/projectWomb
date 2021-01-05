@@ -273,4 +273,26 @@ public class Controller {
         return ResponseEntity.ok("commentary deleted");
     }
 
+    //Favourites Mapping
+    @GetMapping("/favourites")
+    public ResponseEntity<List<Favourites>> getFavouritesList() {
+        return ResponseEntity.ok(queryService.getFavouritesList());
+    }
+
+    @GetMapping("/favourites/{id}")
+    public ResponseEntity<?> getFavourite(@PathVariable("id") int id) {
+        Favourites favourites = queryService.getFavourite(id);
+        if (favourites != null) {
+            return ResponseEntity.ok(favourites);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/favourites/{id}")
+    public ResponseEntity<?> deleteFavourite(@PathVariable("id") int id) {
+        queryService.deleteFavourite(id);
+        return ResponseEntity.ok("favourite deleted");
+    }
+
 }
