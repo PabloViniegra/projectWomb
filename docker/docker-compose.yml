@@ -1,0 +1,22 @@
+
+version: '3'
+
+services:
+  db:
+    container_name: db-womb
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'womb'
+      MYSQL_USER: 'admin'
+      MYSQL_PASSWORD: 'admin1234'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      -  data:/var/lib/mysql
+volumes:
+  data:
+
