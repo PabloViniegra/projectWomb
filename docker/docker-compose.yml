@@ -5,7 +5,6 @@ services:
   db:
     container_name: db-womb
     image: mysql:latest
-    restart: always
     environment:
       MYSQL_DATABASE: 'womb'
       MYSQL_USER: 'admin'
