@@ -235,6 +235,16 @@ public class Controller {
         }
     }
 
+    @PutMapping("/womb/{id}")
+    public ResponseEntity<?> updateWomb(@RequestBody Womb newWomb, @PathVariable("id") int id) {
+        int request = queryService.updateWomb(newWomb,id);
+        if (request != -1) {
+            return ResponseEntity.ok("Womb order updated");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @DeleteMapping("/womb/{id}")
     public ResponseEntity<?> deleteWomb(@PathVariable("id") int id) {
         queryService.deleteWomb(id);
@@ -282,6 +292,16 @@ public class Controller {
     @GetMapping("/favourites/{id}")
     public ResponseEntity<?> getFavourite(@PathVariable("id") int id) {
         Favourites favourites = queryService.getFavourite(id);
+        if (favourites != null) {
+            return ResponseEntity.ok(favourites);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/favourites")
+    public ResponseEntity<?> newFavourite(@RequestBody Favourites newFavourite) {
+        Favourites favourites = queryService.saveFavourite(newFavourite);
         if (favourites != null) {
             return ResponseEntity.ok(favourites);
         } else {
