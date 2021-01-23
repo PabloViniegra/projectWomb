@@ -26,12 +26,12 @@ public class Womb implements Serializable {
     @Column(name = "date")
     private String date;
 
-    @Transient
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "iduser", referencedColumnName = "iduser")
     private Users user;
 
-    @Transient
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "idproduct", referencedColumnName = "idproduct")
     private Products product;
