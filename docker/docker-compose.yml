@@ -17,5 +17,5 @@ services:
     volumes:
       -  db-womb:/var/lib/mysql
 volumes:
-  data:
+  db-womb:
 
