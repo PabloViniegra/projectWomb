@@ -1,6 +1,7 @@
-package net.juanxxiii.demo.database.entities;
+package net.juanxxiii.womb.database.entities;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -11,7 +12,10 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "womb")
+@NoArgsConstructor
 public class Womb implements Serializable {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idwomb")
@@ -36,6 +40,8 @@ public class Womb implements Serializable {
     @JoinColumn(name = "idproduct", referencedColumnName = "idproduct")
     private Products product;
 
-    @OneToMany(mappedBy = "womb")
+    @OneToMany(mappedBy = "idwomb")
     List<FavouritesWomb> favouritesWomb;
+
+
 }

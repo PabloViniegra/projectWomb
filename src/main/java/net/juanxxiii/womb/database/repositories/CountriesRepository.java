@@ -1,6 +1,6 @@
-package net.juanxxiii.demo.database.repositories;
+package net.juanxxiii.womb.database.repositories;
 
-import net.juanxxiii.demo.database.entities.Countries;
+import net.juanxxiii.womb.database.entities.Countries;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

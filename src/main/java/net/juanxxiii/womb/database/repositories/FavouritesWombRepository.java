@@ -1,6 +1,6 @@
-package net.juanxxiii.demo.database.repositories;
+package net.juanxxiii.womb.database.repositories;
 
-import net.juanxxiii.demo.database.entities.FavouritesWomb;
+import net.juanxxiii.womb.database.entities.FavouritesWomb;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

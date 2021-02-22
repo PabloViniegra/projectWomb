@@ -1,11 +1,10 @@
-package net.juanxxiii.demo.database.entities;
+package net.juanxxiii.womb.database.entities;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -24,6 +23,6 @@ public class Favourites {
     @Column(name = "date")
     private String date;
 
-    @OneToMany(mappedBy = "favourites")
+    @OneToMany(mappedBy = "idfavourite")
     List<FavouritesWomb> favouritesWombs;
 }

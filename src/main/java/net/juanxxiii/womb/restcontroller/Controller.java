@@ -1,7 +1,8 @@
-package net.juanxxiii.demo.restcontroller;
+package net.juanxxiii.womb.restcontroller;
 
-import net.juanxxiii.demo.database.entities.*;
-import net.juanxxiii.demo.services.QueryService;
+import net.juanxxiii.womb.database.entities.*;
+import net.juanxxiii.womb.dto.UserLoginDto;
+import net.juanxxiii.womb.services.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -66,6 +67,16 @@ public class Controller {
         Users user = queryService.saveUser(newuser);
         if (user != null) {
             return ResponseEntity.ok(newuser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserLoginDto userLoginDto) {
+        boolean checkUser = queryService.checkUserExist(userLoginDto);
+        if (checkUser) {
+            return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
         }

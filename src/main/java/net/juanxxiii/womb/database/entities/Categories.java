@@ -1,4 +1,4 @@
-package net.juanxxiii.demo.database.entities;
+package net.juanxxiii.womb.database.entities;
 
 import com.sun.istack.NotNull;
 import lombok.Getter;
@@ -6,24 +6,21 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "brand")
-public class Brand implements Serializable {
-
+@Table(name = "categories")
+public class Categories implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
-    @Column(name = "idbrand")
+    @Column(name = "idcategory")
     private int id;
 
     @Column(name = "name")
     private String name;
 
-
-
-
+    @Column(name = "description")
+    private String description;
 }

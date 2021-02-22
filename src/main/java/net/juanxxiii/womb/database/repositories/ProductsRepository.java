@@ -1,6 +1,6 @@
-package net.juanxxiii.demo.database.repositories;
+package net.juanxxiii.womb.database.repositories;
 
-import net.juanxxiii.demo.database.entities.Products;
+import net.juanxxiii.womb.database.entities.Products;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

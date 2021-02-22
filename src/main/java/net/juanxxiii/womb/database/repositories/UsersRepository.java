@@ -1,6 +1,6 @@
-package net.juanxxiii.demo.database.repositories;
+package net.juanxxiii.womb.database.repositories;
 
-import net.juanxxiii.demo.database.entities.Users;
+import net.juanxxiii.womb.database.entities.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -39,4 +39,6 @@ public interface UsersRepository extends JpaRepository<Users, Integer> {
     @Modifying
     @Query("UPDATE Users u SET u.password = :password WHERE u.id = :id")
     int updateUserPassword(@Param("password") String password, @Param("id") int id);
+
+    Users findByUsernameAndPassword(String username, String password);
 }

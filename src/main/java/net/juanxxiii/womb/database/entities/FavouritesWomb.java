@@ -1,10 +1,9 @@
-package net.juanxxiii.demo.database.entities;
+package net.juanxxiii.womb.database.entities;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -17,13 +16,11 @@ public class FavouritesWomb {
     @Column(name = "idwombfavourite")
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "idfavourite")
-    private Favourites favourites;
+    @Column(name = "idfavourite")
+    private int idfavourite;
 
-    @ManyToOne
-    @JoinColumn(name = "idwomb")
-    private Womb womb;
+    @Column(name = "idwomb")
+    private int idwomb;
 
     @Column(name = "date")
     private String date;

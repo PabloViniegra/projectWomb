@@ -1,4 +1,4 @@
-package net.juanxxiii.demo.database.entities;
+package net.juanxxiii.womb.database.entities;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,11 +1,11 @@
-package net.juanxxiii.demo.services;
+package net.juanxxiii.womb.services;
 
 import lombok.extern.java.Log;
-import net.juanxxiii.demo.database.entities.*;
-import net.juanxxiii.demo.database.repositories.*;
+import net.juanxxiii.womb.database.entities.*;
+import net.juanxxiii.womb.database.repositories.*;
+import net.juanxxiii.womb.dto.UserLoginDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -67,8 +67,8 @@ public class QueryService {
 
     public Users saveUser(Users newuser) {
         if (newuser.getCountry() != null) {
-            Users user = usersRepository.findById(newuser.getCountry().getId()).orElse(null);
-            newuser.setCountry(user.getCountry());
+            Countries country = countriesRepository.findById(newuser.getCountry().getId()).orElse(null);
+            newuser.setCountry(country);
         }
         return usersRepository.save(newuser);
 
@@ -192,29 +192,55 @@ public class QueryService {
         return wombRepository.findById(id).orElse(null);
     }
 
-    public Womb saveWomb(Womb newwomb) {
+    public Womb saveWomb(Womb newWomb) {
         List<FavouritesWomb> favouritesWombs = null;
-        if (!newwomb.getFavouritesWomb().isEmpty()) {
-            favouritesWombs = newwomb.getFavouritesWomb();
-            newwomb.setFavouritesWomb(null);
+        if (!newWomb.getFavouritesWomb().isEmpty()) {
+            favouritesWombs = newWomb.getFavouritesWomb();
+            newWomb.setFavouritesWomb(null);
         }
-        int id = wombRepository.lastId();
+        if (newWomb.getProduct() != null) {
+            Products products = productsRepository.findById(newWomb.getProduct().getId()).orElse(saveProduct(newWomb.getProduct()));
+            newWomb.setProduct(products);
+        }
+        if (newWomb.getUser() != null) {
+            Users user = usersRepository.findById(newWomb.getUser().getId()).orElse(saveUser(newWomb.getUser()));
+            newWomb.setUser(user);
+        }
+        Womb womb = wombRepository.save(newWomb);
         if (favouritesWombs != null) {
             favouritesWombs.forEach(fav -> {
-                fav.setId(id);
+                fav.setId(womb.getId());
                 favouritesWombRepository.save(fav);
             });
         }
+        womb.setFavouritesWomb(favouritesWombs);
+        return womb;
+    }
 
-        if (newwomb.getProduct() != null) {
-            Products products = productsRepository.findById(newwomb.getProduct().getId()).orElse(saveProduct(newwomb.getProduct()));
-            newwomb.setProduct(products);
-        }
-        if (newwomb.getUser() != null) {
-            Users user = usersRepository.findById(newwomb.getUser().getId()).orElse(saveUser(newwomb.getUser()));
-            newwomb.setUser(user);
-        }
-        return wombRepository.save(newwomb);
+    public int updateWomb(Womb newWomb, int id) {
+
+        return wombRepository.findById(id).map(womb -> {
+            if (!newWomb.getUser().equals(womb.getUser())) {
+                Users user = usersRepository.findById(newWomb.getUser().getId()).orElse(saveUser(newWomb.getUser()));
+                wombRepository.updateUser(user.getId(), id);
+            }
+            if (!newWomb.getProduct().equals(womb.getProduct())) {
+                Products products = productsRepository.findById(newWomb.getProduct().getId()).orElse(saveProduct(newWomb.getProduct()));
+                wombRepository.updateProducts(products.getId(), id);
+            }
+            List<FavouritesWomb> favouritesWombs = womb.getFavouritesWomb();
+            newWomb.getFavouritesWomb().forEach(fav -> {
+                if (!favouritesWombs.contains(fav)) {
+                    favouritesWombRepository.save(fav);
+                }
+            });
+            favouritesWombs.forEach(fav -> {
+                if (!newWomb.getFavouritesWomb().contains(fav)) {
+                    favouritesWombRepository.deleteById(fav.getId());
+                }
+            });
+            return wombRepository.updateWomb(newWomb.getDate(), newWomb.getReview(), newWomb.getScore(), id);
+        }).orElse(-1);
     }
 
     public void deleteWomb(int id) {
@@ -265,50 +291,34 @@ public class QueryService {
                                 .orElse(null)));
     }
 
-    public int updateWomb(Womb newWomb, int id) {
-
-        return wombRepository.findById(id).map(womb -> {
-            if (!newWomb.getUser().equals(womb.getUser())) {
-                Users user = usersRepository.findById(newWomb.getUser().getId()).orElse(saveUser(newWomb.getUser()));
-                wombRepository.updateUser(user.getId(), id);
-            }
-            if (!newWomb.getProduct().equals(womb.getProduct())) {
-                Products products = productsRepository.findById(newWomb.getProduct().getId()).orElse(saveProduct(newWomb.getProduct()));
-                wombRepository.updateProducts(products.getId(), id);
-            }
-            List<FavouritesWomb> favouritesWombs = womb.getFavouritesWomb();
-            newWomb.getFavouritesWomb().forEach(fav -> {
-                if (!favouritesWombs.contains(fav)) {
-                    fav.setId(fav.getFavourites().getId());
-                    favouritesWombRepository.save(fav);
-                }
-            });
-            favouritesWombs.forEach(fav -> {
-                if (!newWomb.getFavouritesWomb().contains(fav)) {
-                    favouritesWombRepository.deleteById(fav.getId());
-                }
-            });
-            return wombRepository.updateWomb(newWomb.getDate(), newWomb.getReview(), newWomb.getScore(), id);
-        }).orElse(-1);
-    }
-
     public Favourites saveFavourite(Favourites newFavourite) {
+        List<FavouritesWomb> favouritesWombs = null;
         if (newFavourite.getUser() != null) {
             Users users = usersRepository.findById(newFavourite.getUser().getId()).orElse(saveUser(newFavourite.getUser()));
             newFavourite.setUser(users);
         }
-        List<FavouritesWomb> favouritesWombs = null;
         if (!newFavourite.getFavouritesWombs().isEmpty()) {
             favouritesWombs = newFavourite.getFavouritesWombs();
             newFavourite.setFavouritesWombs(null);
         }
-        int id = favouritesRepository.lastId();
+        Favourites favourites = favouritesRepository.save(newFavourite);
+
         if (favouritesWombs != null) {
             favouritesWombs.forEach(fav -> {
-                fav.setId(id);
+                fav.setId(favourites.getId());
                 favouritesWombRepository.save(fav);
             });
         }
-        return favouritesRepository.save(newFavourite);
+        favourites.setFavouritesWombs(favouritesWombs);
+        return favourites;
+    }
+
+    public boolean checkUserExist(UserLoginDto userLoginDto) {
+        Users users = usersRepository.findByUsernameAndPassword(userLoginDto.getUsername(), userLoginDto.getPassword());
+        if (users != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
