@@ -1,5 +1,6 @@
 package net.juanxxiii.womb.restcontroller;
 
+import net.juanxxiii.womb.common.utils.Copy;
 import net.juanxxiii.womb.database.entities.*;
 import net.juanxxiii.womb.dto.UserLoginDto;
 import net.juanxxiii.womb.services.QueryService;
@@ -91,6 +92,14 @@ public class Controller {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PatchMapping("/users/{id}")
+    public ResponseEntity<?> partialUpdateUser(@PathVariable("id") int id, @RequestBody Users newUser) {
+        Users user = queryService.getUser(id);
+        Copy.copyNonNullProperties(user, newUser);
+        return ResponseEntity.ok().body(newUser);
+    }
+
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUsers(@PathVariable("id") int id) {
@@ -248,7 +257,7 @@ public class Controller {
 
     @PutMapping("/womb/{id}")
     public ResponseEntity<?> updateWomb(@RequestBody Womb newWomb, @PathVariable("id") int id) {
-        int request = queryService.updateWomb(newWomb,id);
+        int request = queryService.updateWomb(newWomb, id);
         if (request != -1) {
             return ResponseEntity.ok("Womb order updated");
         } else {
