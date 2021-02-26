@@ -6,6 +6,7 @@ import net.juanxxiii.womb.dto.UserLoginDto;
 import net.juanxxiii.womb.services.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -96,8 +97,8 @@ public class Controller {
     @PatchMapping("/users/{id}")
     public ResponseEntity<?> partialUpdateUser(@PathVariable("id") int id, @RequestBody Users newUser) {
         Users user = queryService.getUser(id);
-        Copy.copyNonNullProperties(user, newUser);
-        return ResponseEntity.ok().body(newUser);
+        Copy.copyNonNullProperties(newUser,user);
+        return ResponseEntity.ok().body(user);
     }
 
 
