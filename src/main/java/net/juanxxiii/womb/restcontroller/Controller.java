@@ -3,6 +3,8 @@ package net.juanxxiii.womb.restcontroller;
 import net.juanxxiii.womb.common.utils.Copy;
 import net.juanxxiii.womb.database.entities.*;
 import net.juanxxiii.womb.dto.UserLoginDto;
+import net.juanxxiii.womb.exceptions.PasswordMalFormedException;
+import net.juanxxiii.womb.exceptions.ResourceNotFoundException;
 import net.juanxxiii.womb.services.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,12 @@ public class Controller {
 
     @GetMapping("/countries/{id}")
     public ResponseEntity<?> getCountry(@PathVariable("id") int id) {
-        Countries country = queryService.getCountry(id);
+        Countries country = null;
+        try {
+            country = queryService.getCountry(id);
+        } catch (ResourceNotFoundException e) {
+            System.out.println("country doesn't exist");
+        }
         if (country != null) {
             return ResponseEntity.ok(country);
         } else {
@@ -56,7 +63,12 @@ public class Controller {
 
     @GetMapping("/users/{id}")
     public ResponseEntity<?> getUser(@PathVariable("id") int id) {
-        Users user = queryService.getUser(id);
+        Users user = null;
+        try {
+            user = queryService.getUser(id);
+        } catch (ResourceNotFoundException e) {
+            System.out.println("The user doesn't exist");
+        }
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
@@ -66,7 +78,12 @@ public class Controller {
 
     @PostMapping("/users")
     public ResponseEntity<?> newUser(@RequestBody Users newuser) {
-        Users user = queryService.saveUser(newuser);
+        Users user = null;
+        try {
+            user = queryService.saveUser(newuser);
+        } catch (PasswordMalFormedException e) {
+            System.out.println("can't set the password. Error encoding");
+        }
         if (user != null) {
             return ResponseEntity.ok(newuser);
         } else {
@@ -96,7 +113,12 @@ public class Controller {
 
     @PatchMapping("/users/{id}")
     public ResponseEntity<?> partialUpdateUser(@PathVariable("id") int id, @RequestBody Users newUser) {
-        Users user = queryService.getUser(id);
+        Users user = null;
+        try {
+            user = queryService.getUser(id);
+        } catch (ResourceNotFoundException e) {
+            System.out.println("The user doesn't exist");
+        }
         Copy.copyNonNullProperties(newUser,user);
         return ResponseEntity.ok().body(user);
     }
@@ -121,7 +143,12 @@ public class Controller {
 
     @GetMapping("/categories/{id}")
     public ResponseEntity<?> getCategory(@PathVariable("id") int id) {
-        Categories category = queryService.getCategory(id);
+        Categories category = null;
+        try {
+            category = queryService.getCategory(id);
+        } catch (ResourceNotFoundException e) {
+            System.out.println("category doesn't exist");
+        }
         if (category != null) {
             return ResponseEntity.ok(category);
         } else {
@@ -153,7 +180,12 @@ public class Controller {
 
     @GetMapping("/products/{id}")
     public ResponseEntity<?> getProduct(@PathVariable("id") int id) {
-        Products product = queryService.getProduct(id);
+        Products product = null;
+        try {
+            product = queryService.getProduct(id);
+        } catch (ResourceNotFoundException e) {
+            System.out.println("product doen't exist");
+        }
         if (product != null) {
             return ResponseEntity.ok(product);
         } else {
@@ -195,7 +227,12 @@ public class Controller {
 
     @GetMapping("/brand/{id}")
     public ResponseEntity<?> getBrand(@PathVariable("id") int id) {
-        Brand brand = queryService.getBrand(id);
+        Brand brand = null;
+        try {
+            brand = queryService.getBrand(id);
+        } catch (ResourceNotFoundException e) {
+            System.out.println("brand doesn't exist");
+        }
         if (brand != null) {
             return ResponseEntity.ok(brand);
         } else {
@@ -238,7 +275,12 @@ public class Controller {
 
     @GetMapping("womb/{id}")
     public ResponseEntity<?> getWomb(@PathVariable("id") int id) {
-        Womb womb = queryService.getWomb(id);
+        Womb womb = null;
+        try {
+            womb = queryService.getWomb(id);
+        } catch (ResourceNotFoundException e) {
+            System.out.println("womb doesn't exist");
+        }
         if (womb != null) {
             return ResponseEntity.ok(womb);
         } else {
@@ -280,7 +322,12 @@ public class Controller {
 
     @GetMapping("/commentaries/{id}")
     public ResponseEntity<?> getCommentary(@PathVariable("id") int id) {
-        Commentary commentary = queryService.getCommentary(id);
+        Commentary commentary = null;
+        try {
+            commentary = queryService.getCommentary(id);
+        } catch (ResourceNotFoundException e) {
+            System.out.println("Commentary doesn't exist");
+        }
         if (commentary != null) {
             return ResponseEntity.ok(commentary);
         } else {
@@ -312,7 +359,12 @@ public class Controller {
 
     @GetMapping("/favourites/{id}")
     public ResponseEntity<?> getFavourite(@PathVariable("id") int id) {
-        Favourites favourites = queryService.getFavourite(id);
+        Favourites favourites = null;
+        try {
+            favourites = queryService.getFavourite(id);
+        } catch (ResourceNotFoundException e) {
+            System.out.println("Favourite doesn't exist");
+        }
         if (favourites != null) {
             return ResponseEntity.ok(favourites);
         } else {

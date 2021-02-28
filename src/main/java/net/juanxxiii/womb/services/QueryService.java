@@ -4,6 +4,9 @@ import lombok.extern.java.Log;
 import net.juanxxiii.womb.database.entities.*;
 import net.juanxxiii.womb.database.repositories.*;
 import net.juanxxiii.womb.dto.UserLoginDto;
+import net.juanxxiii.womb.exceptions.PasswordMalFormedException;
+import net.juanxxiii.womb.exceptions.ResourceNotFoundException;
+import net.juanxxiii.womb.security.SecurityConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,12 +48,13 @@ public class QueryService {
         this.favouritesWombRepository = favouritesWombRepository;
     }
 
+
     public List<Countries> getCountriesList() {
         return countriesRepository.findAll();
     }
 
-    public Countries getCountry(int id) {
-        return countriesRepository.findById(id).orElse(null);
+    public Countries getCountry(int id) throws ResourceNotFoundException {
+        return countriesRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
     public Countries getCountryByName(String name) {
@@ -61,17 +65,18 @@ public class QueryService {
         return usersRepository.findAll();
     }
 
-    public Users getUser(int id) {
-        return usersRepository.findById(id).orElse(null);
+    public Users getUser(int id) throws ResourceNotFoundException {
+        return usersRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
-    public Users saveUser(Users newuser) {
+    public Users saveUser(Users newuser) throws PasswordMalFormedException {
         if (newuser.getCountry() != null) {
             Countries country = countriesRepository.findById(newuser.getCountry().getId()).orElse(null);
             newuser.setCountry(country);
         }
+        String newPassword = SecurityConfig.encryptPassword(newuser.getPassword());
+        newuser.setPassword(newPassword);
         return usersRepository.save(newuser);
-
     }
 
     public int updateUsers(Users newuser, int id) {
@@ -97,8 +102,8 @@ public class QueryService {
         return categoriesRepository.findAll();
     }
 
-    public Categories getCategory(int id) {
-        return categoriesRepository.findById(id).orElse(null);
+    public Categories getCategory(int id) throws ResourceNotFoundException {
+        return categoriesRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
     public Categories getCategoryByName(String name) {
@@ -121,8 +126,8 @@ public class QueryService {
         return productsRepository.findAll();
     }
 
-    public Products getProduct(int id) {
-        return productsRepository.findById(id).orElse(null);
+    public Products getProduct(int id) throws ResourceNotFoundException {
+        return productsRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
     public Products saveProduct(Products newproduct) {
@@ -163,8 +168,8 @@ public class QueryService {
         return brandRepository.findAll();
     }
 
-    public Brand getBrand(int id) {
-        return brandRepository.findById(id).orElse(null);
+    public Brand getBrand(int id) throws ResourceNotFoundException {
+        return brandRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
     public Brand getBrandByName(String name) {
@@ -188,8 +193,8 @@ public class QueryService {
         return wombRepository.findAll();
     }
 
-    public Womb getWomb(int id) {
-        return wombRepository.findById(id).orElse(null);
+    public Womb getWomb(int id) throws ResourceNotFoundException {
+        return wombRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
     public Womb saveWomb(Womb newWomb) {
@@ -202,10 +207,7 @@ public class QueryService {
             Products products = productsRepository.findById(newWomb.getProduct().getId()).orElse(saveProduct(newWomb.getProduct()));
             newWomb.setProduct(products);
         }
-        if (newWomb.getUser() != null) {
-            Users user = usersRepository.findById(newWomb.getUser().getId()).orElse(saveUser(newWomb.getUser()));
-            newWomb.setUser(user);
-        }
+        checkWombUserForeignConstraint(newWomb);
         Womb womb = wombRepository.save(newWomb);
         if (favouritesWombs != null) {
             favouritesWombs.forEach(fav -> {
@@ -217,11 +219,29 @@ public class QueryService {
         return womb;
     }
 
+    private void checkWombUserForeignConstraint(Womb newWomb) {
+        if (newWomb.getUser() != null) {
+            Users user = null;
+            try {
+                user = usersRepository.findById(newWomb.getUser().getId()).orElse(saveUser(newWomb.getUser()));
+            } catch (PasswordMalFormedException e) {
+                log.warning("error decoding password");
+            }
+            newWomb.setUser(user);
+        }
+    }
+
     public int updateWomb(Womb newWomb, int id) {
 
         return wombRepository.findById(id).map(womb -> {
             if (!newWomb.getUser().equals(womb.getUser())) {
-                Users user = usersRepository.findById(newWomb.getUser().getId()).orElse(saveUser(newWomb.getUser()));
+                Users user = null;
+                try {
+                    user = usersRepository.findById(newWomb.getUser().getId()).orElse(saveUser(newWomb.getUser()));
+                } catch (PasswordMalFormedException e) {
+                    log.warning("error decoding password");
+                }
+                assert user != null;
                 wombRepository.updateUser(user.getId(), id);
             }
             if (!newWomb.getProduct().equals(womb.getProduct())) {
@@ -255,8 +275,8 @@ public class QueryService {
         return commentaryRepository.findAll();
     }
 
-    public Commentary getCommentary(int id) {
-        return commentaryRepository.findById(id).orElse(null);
+    public Commentary getCommentary(int id) throws ResourceNotFoundException {
+        return commentaryRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
     public Commentary saveCommentary(Commentary newcommentary) {
@@ -279,8 +299,8 @@ public class QueryService {
         return favouritesRepository.findAll();
     }
 
-    public Favourites getFavourite(int id) {
-        return favouritesRepository.findById(id).orElse(null);
+    public Favourites getFavourite(int id) throws ResourceNotFoundException {
+        return favouritesRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
     public void deleteFavourite(int id) {
@@ -293,10 +313,7 @@ public class QueryService {
 
     public Favourites saveFavourite(Favourites newFavourite) {
         List<FavouritesWomb> favouritesWombs = null;
-        if (newFavourite.getUser() != null) {
-            Users users = usersRepository.findById(newFavourite.getUser().getId()).orElse(saveUser(newFavourite.getUser()));
-            newFavourite.setUser(users);
-        }
+        checkConstraintForeignKey(newFavourite);
         if (!newFavourite.getFavouritesWombs().isEmpty()) {
             favouritesWombs = newFavourite.getFavouritesWombs();
             newFavourite.setFavouritesWombs(null);
@@ -313,9 +330,26 @@ public class QueryService {
         return favourites;
     }
 
+    private void checkConstraintForeignKey(Favourites newFavourite) {
+        if (newFavourite.getUser() != null) {
+            Users users = null;
+            try {
+                users = usersRepository.findById(newFavourite.getUser().getId()).orElse(saveUser(newFavourite.getUser()));
+            } catch (PasswordMalFormedException e) {
+                log.warning("error decoding password");
+            }
+            newFavourite.setUser(users);
+        }
+    }
+
     public boolean checkUserExist(UserLoginDto userLoginDto) {
-        Users users = usersRepository.findByUsernameAndPassword(userLoginDto.getUsername(), userLoginDto.getPassword());
+        Users users = usersRepository.findByUsername(userLoginDto.getUsername());
         if (users != null) {
+            try {
+                users.setPassword(SecurityConfig.decodePassword(userLoginDto.getPassword(),users.getPassword()));
+            } catch (PasswordMalFormedException e) {
+                log.warning("error decoding password");
+            }
             return true;
         } else {
             return false;
