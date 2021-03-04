@@ -10,7 +10,9 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 public class SecurityConfig {
     public final static String algorithm = "Blowfish";
@@ -55,5 +57,18 @@ public class SecurityConfig {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static String hashingPassword(String pass) {
+        String result = null;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] encodedhash = digest.digest(
+                    pass.getBytes(StandardCharsets.UTF_8));
+            result = Base64.getEncoder().encodeToString(encodedhash);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

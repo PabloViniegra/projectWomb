@@ -1,5 +1,6 @@
 package net.juanxxiii.womb.restcontroller;
 
+import lombok.extern.java.Log;
 import net.juanxxiii.womb.common.utils.Copy;
 import net.juanxxiii.womb.database.entities.*;
 import net.juanxxiii.womb.dto.UserLoginDto;
@@ -7,12 +8,13 @@ import net.juanxxiii.womb.exceptions.PasswordMalFormedException;
 import net.juanxxiii.womb.exceptions.ResourceNotFoundException;
 import net.juanxxiii.womb.services.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@Log
 @CrossOrigin
 @RestController
 @RequestMapping("/womb/api")
@@ -93,11 +95,16 @@ public class Controller {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserLoginDto userLoginDto) {
-        boolean checkUser = queryService.checkUserExist(userLoginDto);
+        boolean checkUser = false;
+        try {
+            checkUser = queryService.checkUserExist(userLoginDto);
+        } catch (PasswordMalFormedException e) {
+            System.out.println("La contraseña no es la misma");
+        }
         if (checkUser) {
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 
@@ -119,7 +126,7 @@ public class Controller {
         } catch (ResourceNotFoundException e) {
             System.out.println("The user doesn't exist");
         }
-        Copy.copyNonNullProperties(newUser,user);
+        Copy.copyNonNullProperties(newUser, user);
         return ResponseEntity.ok().body(user);
     }
 

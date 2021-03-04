@@ -342,14 +342,9 @@ public class QueryService {
         }
     }
 
-    public boolean checkUserExist(UserLoginDto userLoginDto) {
+    public boolean checkUserExist(UserLoginDto userLoginDto) throws PasswordMalFormedException {
         Users users = usersRepository.findByUsername(userLoginDto.getUsername());
-        if (users != null) {
-            try {
-                users.setPassword(SecurityConfig.decodePassword(userLoginDto.getPassword(),users.getPassword()));
-            } catch (PasswordMalFormedException e) {
-                log.warning("error decoding password");
-            }
+        if (users != null && users.getPassword().equals(SecurityConfig.encryptPassword(userLoginDto.getPassword()))) {
             return true;
         } else {
             return false;
