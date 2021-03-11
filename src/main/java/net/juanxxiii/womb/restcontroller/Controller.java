@@ -6,6 +6,7 @@ import net.juanxxiii.womb.database.entities.*;
 import net.juanxxiii.womb.dto.UserLoginDto;
 import net.juanxxiii.womb.exceptions.PasswordMalFormedException;
 import net.juanxxiii.womb.exceptions.ResourceNotFoundException;
+import net.juanxxiii.womb.security.SecurityConfig;
 import net.juanxxiii.womb.services.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
+
 @Log
 @CrossOrigin
 @RestController
@@ -121,13 +124,17 @@ public class Controller {
     @PatchMapping("/users/{id}")
     public ResponseEntity<?> partialUpdateUser(@PathVariable("id") int id, @RequestBody Users newUser) {
         Users user = null;
+
         try {
             user = queryService.getUser(id);
-        } catch (ResourceNotFoundException e) {
+            Copy.copyNonNullProperties(newUser, user);
+            user.setId(id);
+            user.setPassword(SecurityConfig.encryptPassword(user.getPassword()));
+            queryService.updateUsers(user, user.getId());
+        } catch (ResourceNotFoundException | PasswordMalFormedException e) {
             System.out.println("The user doesn't exist");
         }
-        Copy.copyNonNullProperties(newUser, user);
-        return ResponseEntity.ok().body(user);
+        return ResponseEntity.ok(Objects.requireNonNull(user));
     }
 
 
