@@ -6,8 +6,9 @@ import net.juanxxiii.womb.database.repositories.*;
 import net.juanxxiii.womb.dto.UserLoginDto;
 import net.juanxxiii.womb.exceptions.PasswordMalFormedException;
 import net.juanxxiii.womb.exceptions.ResourceNotFoundException;
-import net.juanxxiii.womb.security.SecurityConfig;
+import net.juanxxiii.womb.security.Encrypter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class QueryService {
     private final CommentaryRepository commentaryRepository;
     private final FavouritesRepository favouritesRepository;
     private final FavouritesWombRepository favouritesWombRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public QueryService(CountriesRepository countriesRepository,
@@ -36,7 +38,8 @@ public class QueryService {
                         WombRepository wombRepository,
                         CommentaryRepository commentaryRepository,
                         FavouritesRepository favouritesRepository,
-                        FavouritesWombRepository favouritesWombRepository) {
+                        FavouritesWombRepository favouritesWombRepository,
+                        BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.countriesRepository = countriesRepository;
         this.usersRepository = usersRepository;
         this.categoriesRepository = categoriesRepository;
@@ -46,6 +49,7 @@ public class QueryService {
         this.commentaryRepository = commentaryRepository;
         this.favouritesRepository = favouritesRepository;
         this.favouritesWombRepository = favouritesWombRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
 
@@ -74,8 +78,6 @@ public class QueryService {
             Countries country = countriesRepository.findById(newuser.getCountry().getId()).orElse(null);
             newuser.setCountry(country);
         }
-        String newPassword = SecurityConfig.encryptPassword(newuser.getPassword());
-        newuser.setPassword(newPassword);
         return usersRepository.save(newuser);
     }
 
@@ -344,7 +346,7 @@ public class QueryService {
 
     public boolean checkUserExist(UserLoginDto userLoginDto) throws PasswordMalFormedException {
         Users users = usersRepository.findByUsername(userLoginDto.getUsername());
-        if (users != null && users.getPassword().equals(SecurityConfig.encryptPassword(userLoginDto.getPassword()))) {
+        if (users != null && users.getPassword().equals(Encrypter.encryptPassword(userLoginDto.getPassword()))) {
             return true;
         } else {
             return false;

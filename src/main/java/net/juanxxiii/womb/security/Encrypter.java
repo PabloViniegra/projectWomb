@@ -14,7 +14,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-public class SecurityConfig {
+public class Encrypter {
     public final static String algorithm = "Blowfish";
 
     public static String encryptPassword(String pass) throws PasswordMalFormedException {

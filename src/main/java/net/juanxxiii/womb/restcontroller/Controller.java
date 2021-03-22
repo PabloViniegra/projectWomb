@@ -6,12 +6,12 @@ import net.juanxxiii.womb.database.entities.*;
 import net.juanxxiii.womb.dto.UserLoginDto;
 import net.juanxxiii.womb.exceptions.PasswordMalFormedException;
 import net.juanxxiii.womb.exceptions.ResourceNotFoundException;
-import net.juanxxiii.womb.security.SecurityConfig;
+import net.juanxxiii.womb.security.Encrypter;
 import net.juanxxiii.womb.services.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,10 +23,23 @@ import java.util.Objects;
 @RequestMapping("/womb/api")
 public class Controller {
     private final QueryService queryService;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public Controller(QueryService queryService) {
+    public Controller(QueryService queryService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.queryService = queryService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
+    //Security Config User
+    @PostMapping("/signup")
+    public void signUp(@RequestBody Users user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        try {
+            queryService.saveUser(user);
+        } catch (PasswordMalFormedException e) {
+            e.printStackTrace();
+        }
     }
 
     //Countries Mapping
@@ -129,9 +142,9 @@ public class Controller {
             user = queryService.getUser(id);
             Copy.copyNonNullProperties(newUser, user);
             user.setId(id);
-            user.setPassword(SecurityConfig.encryptPassword(user.getPassword()));
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             queryService.updateUsers(user, user.getId());
-        } catch (ResourceNotFoundException | PasswordMalFormedException e) {
+        } catch (ResourceNotFoundException e) {
             System.out.println("The user doesn't exist");
         }
         return ResponseEntity.ok(Objects.requireNonNull(user));
