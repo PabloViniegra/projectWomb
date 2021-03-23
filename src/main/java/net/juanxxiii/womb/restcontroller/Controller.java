@@ -31,17 +31,6 @@ public class Controller {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    //Security Config User
-    @PostMapping("/signup")
-    public void signUp(@RequestBody Users user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        try {
-            queryService.saveUser(user);
-        } catch (PasswordMalFormedException e) {
-            e.printStackTrace();
-        }
-    }
-
     //Countries Mapping
     @GetMapping("/countries")
     public ResponseEntity<List<Countries>> getCountriesList() {
@@ -142,9 +131,9 @@ public class Controller {
             user = queryService.getUser(id);
             Copy.copyNonNullProperties(newUser, user);
             user.setId(id);
-            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            user.setPassword(Encrypter.encryptPassword(user.getPassword()));
             queryService.updateUsers(user, user.getId());
-        } catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundException | PasswordMalFormedException e) {
             System.out.println("The user doesn't exist");
         }
         return ResponseEntity.ok(Objects.requireNonNull(user));

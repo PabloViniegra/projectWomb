@@ -78,6 +78,7 @@ public class QueryService {
             Countries country = countriesRepository.findById(newuser.getCountry().getId()).orElse(null);
             newuser.setCountry(country);
         }
+        newuser.setPassword(Encrypter.encryptPassword(newuser.getPassword()));
         return usersRepository.save(newuser);
     }
 
