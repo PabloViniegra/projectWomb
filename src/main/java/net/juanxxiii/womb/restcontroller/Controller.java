@@ -113,6 +113,28 @@ public class Controller {
         }
     }
 
+    @GetMapping("/find/user/{username}")
+    public ResponseEntity<?> findAnUsername(@PathVariable("username") String username) {
+        boolean check = false;
+        check = queryService.findUser(username);
+        if (check) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/find/email/{email}")
+    public ResponseEntity<?> findEmail(@PathVariable("email") String email) {
+        boolean check = false;
+        check = queryService.findEmail(email);
+        if (check) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PutMapping("/users/{id}")
     public ResponseEntity<?> updateUsers(@RequestBody Users newuser, @PathVariable("id") int id) {
         int user = queryService.updateUsers(newuser, id);

@@ -353,4 +353,22 @@ public class QueryService {
             return false;
         }
     }
+
+    public boolean findUser(String username) {
+        Users user = usersRepository.findByUsername(username);
+        if (user != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean findEmail(String email) {
+        Users user = usersRepository.findByEmail(email);
+        if (user != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
