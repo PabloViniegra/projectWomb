@@ -120,7 +120,7 @@ public class Controller {
         if (check) {
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
     }
 
@@ -131,7 +131,7 @@ public class Controller {
         if (check) {
             return ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
     }
 

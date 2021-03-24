@@ -36,4 +36,16 @@ public class Users implements Serializable {
     @JoinColumn(name = "idcountry", referencedColumnName = "id")
     private Countries country;
 
+    @Override
+    public String toString() {
+        return "Users{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", country=" + country +
+                '}';
+    }
 }
