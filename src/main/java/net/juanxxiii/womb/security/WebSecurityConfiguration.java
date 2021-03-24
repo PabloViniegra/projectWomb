@@ -41,6 +41,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/womb/api/find/email/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/womb/api/users").permitAll()
                 .antMatchers(HttpMethod.POST, "/womb/system/users/signup").permitAll()
+                .antMatchers(HttpMethod.GET, "/womb/api/lastwombs").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilter(new AuthenticationRequest(authenticationManager()))
                 .addFilter(new Authorization(authenticationManager()))

@@ -311,6 +311,11 @@ public class Controller {
         return ResponseEntity.ok(queryService.getWombList());
     }
 
+    @GetMapping("/lastwombs")
+    public ResponseEntity<List<Womb>> getLastWombs() {
+        return ResponseEntity.ok(queryService.getLastWombsList());
+    }
+
     @GetMapping("womb/{id}")
     public ResponseEntity<?> getWomb(@PathVariable("id") int id) {
         Womb womb = null;

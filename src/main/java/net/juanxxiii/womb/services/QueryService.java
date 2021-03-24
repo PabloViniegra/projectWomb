@@ -371,4 +371,8 @@ public class QueryService {
             return false;
         }
     }
+
+    public List<Womb> getLastWombsList() {
+        return wombRepository.findTop10ByOrderById();
+    }
 }

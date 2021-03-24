@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface WombRepository extends JpaRepository<Womb, Integer> {
     @Transactional
@@ -27,4 +29,6 @@ public interface WombRepository extends JpaRepository<Womb, Integer> {
 
     @Query("SELECT MAX(w.id) FROM Womb w")
     int lastId();
+
+    List<Womb> findTop10ByOrderById();
 }
