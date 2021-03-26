@@ -375,4 +375,14 @@ public class QueryService {
     public List<Womb> getLastWombsList() {
         return wombRepository.findTop10ByOrderById();
     }
+
+    public Users getUserByUsername(String username) {
+        Users user = usersRepository.findByUsername(username);
+        if (user != null) {
+            return user;
+        } else {
+            log.warning("User doesn't exist");
+        }
+        return user;
+    }
 }

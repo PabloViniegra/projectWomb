@@ -135,6 +135,11 @@ public class Controller {
         }
     }
 
+    @GetMapping("/username/{username}")
+    public ResponseEntity<?> getUserByUsername(@PathVariable("username") String username) {
+        return ResponseEntity.ok(queryService.getUserByUsername(username));
+    }
+
     @PutMapping("/users/{id}")
     public ResponseEntity<?> updateUsers(@RequestBody Users newuser, @PathVariable("id") int id) {
         int user = queryService.updateUsers(newuser, id);
