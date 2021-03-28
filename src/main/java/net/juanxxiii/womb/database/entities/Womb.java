@@ -15,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 public class Womb implements Serializable {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idwomb")

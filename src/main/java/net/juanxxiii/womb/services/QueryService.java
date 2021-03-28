@@ -373,7 +373,7 @@ public class QueryService {
     }
 
     public List<Womb> getLastWombsList() {
-        return wombRepository.findTop10ByOrderById();
+        return wombRepository.findFirst10ByOrderById();
     }
 
     public Users getUserByUsername(String username) {
