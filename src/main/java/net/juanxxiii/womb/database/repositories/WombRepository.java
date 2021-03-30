@@ -30,5 +30,6 @@ public interface WombRepository extends JpaRepository<Womb, Integer> {
     @Query("SELECT MAX(w.id) FROM Womb w")
     int lastId();
 
-    List<Womb> findFirst10ByOrderById();
+    List<Womb> findFirst10ByOrderByIdDesc();
+
 }
