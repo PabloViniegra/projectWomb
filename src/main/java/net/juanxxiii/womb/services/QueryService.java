@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -384,5 +385,27 @@ public class QueryService {
             log.warning("User doesn't exist");
         }
         return user;
+    }
+
+    public List<Womb> getWombByUser(int idUser) {
+        List<Womb> wombs = new ArrayList<>();
+        Users user =usersRepository.findById(idUser).orElse(null);
+        if (user != null) {
+            wombs = wombRepository.findByUser(user);
+        } else {
+            log.info("User doesn't exist");
+        }
+        return wombs;
+    }
+
+    public List<Commentary> getCommentariesByWomb(int idWomb) {
+        List<Commentary> commentaries = new ArrayList<>();
+        Womb womb = wombRepository.findById(idWomb).orElse(null);
+        if (womb != null) {
+            commentaryRepository.findByWomb(womb);
+        } else {
+            log.info("Womb doesn't exist");
+        }
+        return commentaries;
     }
 }

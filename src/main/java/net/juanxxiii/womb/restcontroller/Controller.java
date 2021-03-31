@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -316,6 +317,11 @@ public class Controller {
         return ResponseEntity.ok(queryService.getWombList());
     }
 
+    @GetMapping("/womb/user/{user}")
+    public ResponseEntity<List<Womb>> getWombsByUser (@PathVariable("user") int idUser) {
+        return ResponseEntity.ok(queryService.getWombByUser(idUser));
+    }
+
     @GetMapping("/lastwombs")
     public ResponseEntity<List<Womb>> getLastWombs() {
         return ResponseEntity.ok(queryService.getLastWombsList());
@@ -381,6 +387,11 @@ public class Controller {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/commentaries/womb/{womb}")
+    public ResponseEntity<List<Commentary>> getCopmmentariesByWomb(@PathVariable("womb") int idWomb) {
+        return ResponseEntity.ok(queryService.getCommentariesByWomb(idWomb));
     }
 
     @PostMapping("/commentaries")

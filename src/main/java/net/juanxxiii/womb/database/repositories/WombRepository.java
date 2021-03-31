@@ -1,5 +1,6 @@
 package net.juanxxiii.womb.database.repositories;
 
+import net.juanxxiii.womb.database.entities.Users;
 import net.juanxxiii.womb.database.entities.Womb;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -32,4 +33,5 @@ public interface WombRepository extends JpaRepository<Womb, Integer> {
 
     List<Womb> findFirst10ByOrderByIdDesc();
 
+    List<Womb> findByUser(Users user);
 }

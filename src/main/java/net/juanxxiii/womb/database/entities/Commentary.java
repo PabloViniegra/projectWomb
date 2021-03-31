@@ -22,7 +22,7 @@ public class Commentary implements Serializable {
     @Column(name = "date")
     private String date;
 
-    @Transient
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "idwomb", referencedColumnName = "idwomb")
     private Womb womb;
