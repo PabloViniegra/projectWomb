@@ -226,10 +226,14 @@ public class QueryService {
     private void checkWombUserForeignConstraint(Womb newWomb) {
         if (newWomb.getUser() != null) {
             Users user = null;
-            try {
-                user = usersRepository.findById(newWomb.getUser().getId()).orElse(saveUser(newWomb.getUser()));
-            } catch (PasswordMalFormedException e) {
-                log.warning("error decoding password");
+            System.out.println(newWomb.getUser().getId());
+            user = usersRepository.findByUsername(newWomb.getUser().getUsername());
+            if (user == null) {
+                try {
+                    saveUser(newWomb.getUser());
+                } catch (PasswordMalFormedException e) {
+                    e.printStackTrace();
+                }
             }
             newWomb.setUser(user);
         }
@@ -285,7 +289,7 @@ public class QueryService {
 
     public Commentary saveCommentary(Commentary newcommentary) {
         if (newcommentary.getWomb() != null) {
-            Womb womb = wombRepository.findById(newcommentary.getWomb().getId()).orElse(wombRepository.save(newcommentary.getWomb()));
+            Womb womb = wombRepository.findById(newcommentary.getWomb().getId()).orElse(saveWomb(newcommentary.getWomb()));
             newcommentary.setWomb(womb);
         }
         return commentaryRepository.save(newcommentary);
