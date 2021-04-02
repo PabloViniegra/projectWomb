@@ -12,5 +12,5 @@ import java.util.List;
 @Repository
 public interface CommentaryRepository extends JpaRepository<Commentary, Integer> {
 
-    List<Commentary> findByWomb(Womb womb);
+    List<Commentary> findByWombOrderByIdDesc(Womb womb);
 }

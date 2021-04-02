@@ -22,6 +22,10 @@ public class Commentary implements Serializable {
     @Column(name = "date")
     private String date;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "iduser", referencedColumnName = "iduser")
+    private Users user;
+
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "idwomb", referencedColumnName = "idwomb")

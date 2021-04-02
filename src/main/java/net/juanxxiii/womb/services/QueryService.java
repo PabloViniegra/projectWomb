@@ -292,6 +292,12 @@ public class QueryService {
             Womb womb = wombRepository.findById(newcommentary.getWomb().getId()).orElse(saveWomb(newcommentary.getWomb()));
             newcommentary.setWomb(womb);
         }
+        if (newcommentary.getUser() != null) {
+            Users user = usersRepository.findByUsername(newcommentary.getUser().getUsername());
+            if (user != null) {
+                newcommentary.setUser(user);
+            }
+        }
         return commentaryRepository.save(newcommentary);
     }
 
@@ -406,7 +412,7 @@ public class QueryService {
         List<Commentary> commentaries = new ArrayList<>();
         Womb womb = wombRepository.findById(idWomb).orElse(null);
         if (womb != null) {
-            commentaryRepository.findByWomb(womb);
+            commentaries = commentaryRepository.findByWombOrderByIdDesc(womb);
         } else {
             log.info("Womb doesn't exist");
         }
