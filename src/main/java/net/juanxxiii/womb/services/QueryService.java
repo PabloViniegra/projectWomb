@@ -418,4 +418,8 @@ public class QueryService {
         }
         return commentaries;
     }
+
+    public List<Womb> searchWombsContainsKeyword(String keyword) {
+        return wombRepository.searchWomb(keyword);
+    }
 }

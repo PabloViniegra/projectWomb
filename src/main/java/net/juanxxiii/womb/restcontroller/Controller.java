@@ -342,6 +342,11 @@ public class Controller {
         }
     }
 
+    @GetMapping("/womb/search/{keyword}")
+    public ResponseEntity<List<Womb>> findWombsWhichContainsKeyword(@PathVariable("keyword") String keyword) {
+        return ResponseEntity.ok(queryService.searchWombsContainsKeyword(keyword));
+    }
+
     @PostMapping("/womb")
     public ResponseEntity<?> newWomb(@RequestBody Womb newwomb) {
         Womb womb = queryService.saveWomb(newwomb);
