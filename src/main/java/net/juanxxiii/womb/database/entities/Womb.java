@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -39,8 +40,17 @@ public class Womb implements Serializable {
     @JoinColumn(name = "idproduct", referencedColumnName = "idproduct")
     private Products product;
 
-    @OneToMany(mappedBy = "idwomb")
-    List<FavouritesWomb> favouritesWomb;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Womb womb = (Womb) o;
+        return id == womb.id;
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

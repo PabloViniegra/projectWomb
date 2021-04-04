@@ -31,4 +31,6 @@ public class Products implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(name = "idbrand", referencedColumnName = "idbrand")
     private Brand brand;
+
+
 }

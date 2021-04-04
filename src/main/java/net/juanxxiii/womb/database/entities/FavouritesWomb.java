@@ -16,11 +16,13 @@ public class FavouritesWomb {
     @Column(name = "idwombfavourite")
     private int id;
 
-    @Column(name = "idfavourite")
-    private int idfavourite;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "iduser", referencedColumnName = "iduser")
+    private Users user;
 
-    @Column(name = "idwomb")
-    private int idwomb;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "idwomb", referencedColumnName = "idwomb")
+    private Womb womb;
 
     @Column(name = "date")
     private String date;

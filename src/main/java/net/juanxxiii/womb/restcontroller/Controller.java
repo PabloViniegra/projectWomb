@@ -416,13 +416,43 @@ public class Controller {
 
     //Favourites Mapping
     @GetMapping("/favourites")
-    public ResponseEntity<List<Favourites>> getFavouritesList() {
+    public ResponseEntity<List<FavouritesWomb>> getFavouritesList() {
         return ResponseEntity.ok(queryService.getFavouritesList());
+    }
+
+    @GetMapping("/favourites/user/{username}")
+    public ResponseEntity<List<FavouritesWomb>> getFavouritesWombByUsername(@PathVariable("username") String username) {
+        List<FavouritesWomb> favs = queryService.getFavouritesWombByUsername(username);
+        if (favs != null) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/favourites/check/{username}/{idwomb}")
+    public ResponseEntity<?> checkFavouriteUserExists(@PathVariable("username") String username, @PathVariable("idwomb") int idwomb) {
+        boolean checkFavExists = queryService.checkFavouriteUserExists(username,idwomb);
+        if (checkFavExists) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    }
+
+    @GetMapping("/favourites/{username}/{idwomb}")
+    public ResponseEntity<FavouritesWomb> getWombByUserAndWomb(@PathVariable("username") String username, @PathVariable("idwomb") int idwomb) {
+        FavouritesWomb favouritesWomb = queryService.getWombByUserAndWomb(username,idwomb);
+        if (favouritesWomb != null) {
+            return ResponseEntity.ok(favouritesWomb);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/favourites/{id}")
     public ResponseEntity<?> getFavourite(@PathVariable("id") int id) {
-        Favourites favourites = null;
+        FavouritesWomb favourites = null;
         try {
             favourites = queryService.getFavourite(id);
         } catch (ResourceNotFoundException e) {
@@ -436,8 +466,8 @@ public class Controller {
     }
 
     @PostMapping("/favourites")
-    public ResponseEntity<?> newFavourite(@RequestBody Favourites newFavourite) {
-        Favourites favourites = queryService.saveFavourite(newFavourite);
+    public ResponseEntity<?> newFavourite(@RequestBody FavouritesWomb newFavourite) {
+        FavouritesWomb favourites = queryService.saveFavourite(newFavourite);
         if (favourites != null) {
             return ResponseEntity.ok(favourites);
         } else {
@@ -451,15 +481,6 @@ public class Controller {
         return ResponseEntity.ok("favourite deleted");
     }
 
-    //FavouritesWomb Mapping
-    @GetMapping("/favouriteswomb")
-    public ResponseEntity<List<FavouritesWomb>> getAllFavouritesWomb() {
-        return ResponseEntity.ok(queryService.getFavouritesWombsList());
-    }
 
-    @GetMapping("/favouriteswomb/{id}")
-    public ResponseEntity<FavouritesWomb> getFavouriteWomb(@PathVariable("id") int id) {
-        return ResponseEntity.ok(queryService.getFavouriteWombId(id));
-    }
 
 }

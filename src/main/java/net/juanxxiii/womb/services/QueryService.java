@@ -8,13 +8,14 @@ import net.juanxxiii.womb.exceptions.PasswordMalFormedException;
 import net.juanxxiii.womb.exceptions.ResourceNotFoundException;
 import net.juanxxiii.womb.security.Encrypter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @Log
@@ -27,7 +28,6 @@ public class QueryService {
     private final BrandRepository brandRepository;
     private final WombRepository wombRepository;
     private final CommentaryRepository commentaryRepository;
-    private final FavouritesRepository favouritesRepository;
     private final FavouritesWombRepository favouritesWombRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -39,7 +39,6 @@ public class QueryService {
                         BrandRepository brandRepository,
                         WombRepository wombRepository,
                         CommentaryRepository commentaryRepository,
-                        FavouritesRepository favouritesRepository,
                         FavouritesWombRepository favouritesWombRepository,
                         BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.countriesRepository = countriesRepository;
@@ -49,7 +48,6 @@ public class QueryService {
         this.brandRepository = brandRepository;
         this.wombRepository = wombRepository;
         this.commentaryRepository = commentaryRepository;
-        this.favouritesRepository = favouritesRepository;
         this.favouritesWombRepository = favouritesWombRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
@@ -203,24 +201,13 @@ public class QueryService {
     }
 
     public Womb saveWomb(Womb newWomb) {
-        List<FavouritesWomb> favouritesWombs = null;
-        if (!newWomb.getFavouritesWomb().isEmpty()) {
-            favouritesWombs = newWomb.getFavouritesWomb();
-            newWomb.setFavouritesWomb(null);
-        }
+
         if (newWomb.getProduct() != null) {
             Products products = productsRepository.findById(newWomb.getProduct().getId()).orElse(saveProduct(newWomb.getProduct()));
             newWomb.setProduct(products);
         }
         checkWombUserForeignConstraint(newWomb);
         Womb womb = wombRepository.save(newWomb);
-        if (favouritesWombs != null) {
-            favouritesWombs.forEach(fav -> {
-                fav.setId(womb.getId());
-                favouritesWombRepository.save(fav);
-            });
-        }
-        womb.setFavouritesWomb(favouritesWombs);
         return womb;
     }
 
@@ -257,17 +244,6 @@ public class QueryService {
                 Products products = productsRepository.findById(newWomb.getProduct().getId()).orElse(saveProduct(newWomb.getProduct()));
                 wombRepository.updateProducts(products.getId(), id);
             }
-            List<FavouritesWomb> favouritesWombs = womb.getFavouritesWomb();
-            newWomb.getFavouritesWomb().forEach(fav -> {
-                if (!favouritesWombs.contains(fav)) {
-                    favouritesWombRepository.save(fav);
-                }
-            });
-            favouritesWombs.forEach(fav -> {
-                if (!newWomb.getFavouritesWomb().contains(fav)) {
-                    favouritesWombRepository.deleteById(fav.getId());
-                }
-            });
             return wombRepository.updateWomb(newWomb.getDate(), newWomb.getReview(), newWomb.getScore(), id);
         }).orElse(-1);
     }
@@ -310,51 +286,46 @@ public class QueryService {
                                 .orElse(null)));
     }
 
-    public List<Favourites> getFavouritesList() {
-        return favouritesRepository.findAll();
+    public List<FavouritesWomb> getFavouritesList() {
+        return favouritesWombRepository.findAll();
     }
 
-    public Favourites getFavourite(int id) throws ResourceNotFoundException {
-        return favouritesRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+    public FavouritesWomb getFavourite(int id) throws ResourceNotFoundException {
+        return favouritesWombRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 
     public void deleteFavourite(int id) {
-        favouritesRepository
+        favouritesWombRepository
                 .delete(Objects
-                        .requireNonNull(favouritesRepository
+                        .requireNonNull(favouritesWombRepository
                                 .findById(id)
                                 .orElse(null)));
     }
 
-    public Favourites saveFavourite(Favourites newFavourite) {
-        List<FavouritesWomb> favouritesWombs = null;
-        checkConstraintForeignKey(newFavourite);
-        if (!newFavourite.getFavouritesWombs().isEmpty()) {
-            favouritesWombs = newFavourite.getFavouritesWombs();
-            newFavourite.setFavouritesWombs(null);
+    public FavouritesWomb saveFavourite(FavouritesWomb newFavourite) {
+        Users user = checkConstraintForeignKey(newFavourite);
+        Womb womb = null;
+        FavouritesWomb favouritesWomb = null;
+        if (newFavourite.getWomb() !=  null) {
+            womb = wombRepository.findById(newFavourite.getWomb().getId()).orElse(null);
         }
-        Favourites favourites = favouritesRepository.save(newFavourite);
 
-        if (favouritesWombs != null) {
-            favouritesWombs.forEach(fav -> {
-                fav.setId(favourites.getId());
-                favouritesWombRepository.save(fav);
-            });
+        if (user != null && womb != null) {
+             favouritesWomb = favouritesWombRepository.save(newFavourite);
         }
-        favourites.setFavouritesWombs(favouritesWombs);
-        return favourites;
+        return favouritesWomb;
     }
 
-    private void checkConstraintForeignKey(Favourites newFavourite) {
+    private Users checkConstraintForeignKey(FavouritesWomb newFavourite) {
+        Users users = null;
         if (newFavourite.getUser() != null) {
-            Users users = null;
             try {
-                users = usersRepository.findById(newFavourite.getUser().getId()).orElse(saveUser(newFavourite.getUser()));
-            } catch (PasswordMalFormedException e) {
-                log.warning("error decoding password");
+                users = usersRepository.findById(newFavourite.getUser().getId()).orElseThrow(ResourceNotFoundException::new);
+            } catch (ResourceNotFoundException e) {
+                log.warning("user doesn't exist");
             }
-            newFavourite.setUser(users);
         }
+        return users;
     }
 
     public boolean checkUserExist(UserLoginDto userLoginDto) throws PasswordMalFormedException {
@@ -431,5 +402,49 @@ public class QueryService {
 
     public FavouritesWomb getFavouriteWombId(int id) {
         return favouritesWombRepository.findById(id).orElse(null);
+    }
+
+    public List<FavouritesWomb> getFavouritesWombByUsername(String username) {
+        List<FavouritesWomb> favs = null;
+        Users user = usersRepository.findByUsername(username);
+        if (user != null) {
+            favs = favouritesWombRepository.findAllByUser(user);
+        }
+        return favs;
+    }
+
+    public boolean checkFavouriteUserExists(String username, int idwomb) {
+        Users user = usersRepository.findByUsername(username);
+        Womb womb = null;
+        AtomicBoolean check = new AtomicBoolean(false);
+        try {
+            womb = wombRepository.findById(idwomb).orElseThrow(ResourceNotFoundException::new);
+
+        } catch (ResourceNotFoundException e) {
+            return false;
+        }
+        Womb finalWomb = womb;
+        if (user != null && womb != null) {
+            favouritesWombRepository.findAllByUser(user).forEach(fav -> {
+                if (finalWomb.equals(fav.getWomb())) {
+                    check.set(true);
+                }
+            });
+        }
+        return check.get();
+    }
+
+    public FavouritesWomb getWombByUserAndWomb(String username, int idwomb) {
+        Users user = usersRepository.findByUsername(username);
+        Womb womb = wombRepository.findById(idwomb).orElse(null);
+        AtomicReference<FavouritesWomb> favouritesWomb = new AtomicReference<>(null);
+        if (user != null && womb != null) {
+            favouritesWombRepository.findAllByUser(user).forEach(fav -> {
+                if (womb.equals(fav.getWomb())) {
+                    favouritesWomb.set(fav);
+                }
+            });
+        }
+        return favouritesWomb.get();
     }
 }
