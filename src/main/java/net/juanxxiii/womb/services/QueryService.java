@@ -8,6 +8,7 @@ import net.juanxxiii.womb.exceptions.PasswordMalFormedException;
 import net.juanxxiii.womb.exceptions.ResourceNotFoundException;
 import net.juanxxiii.womb.security.Encrypter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -421,5 +422,14 @@ public class QueryService {
 
     public List<Womb> searchWombsContainsKeyword(String keyword) {
         return wombRepository.searchWomb(keyword);
+    }
+
+
+    public List<FavouritesWomb> getFavouritesWombsList() {
+        return favouritesWombRepository.findAll();
+    }
+
+    public FavouritesWomb getFavouriteWombId(int id) {
+        return favouritesWombRepository.findById(id).orElse(null);
     }
 }

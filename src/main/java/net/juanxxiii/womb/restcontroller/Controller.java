@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -450,6 +449,17 @@ public class Controller {
     public ResponseEntity<?> deleteFavourite(@PathVariable("id") int id) {
         queryService.deleteFavourite(id);
         return ResponseEntity.ok("favourite deleted");
+    }
+
+    //FavouritesWomb Mapping
+    @GetMapping("/favouriteswomb")
+    public ResponseEntity<List<FavouritesWomb>> getAllFavouritesWomb() {
+        return ResponseEntity.ok(queryService.getFavouritesWombsList());
+    }
+
+    @GetMapping("/favouriteswomb/{id}")
+    public ResponseEntity<FavouritesWomb> getFavouriteWomb(@PathVariable("id") int id) {
+        return ResponseEntity.ok(queryService.getFavouriteWombId(id));
     }
 
 }
