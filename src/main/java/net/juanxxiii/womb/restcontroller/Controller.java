@@ -424,7 +424,7 @@ public class Controller {
     public ResponseEntity<List<FavouritesWomb>> getFavouritesWombByUsername(@PathVariable("username") String username) {
         List<FavouritesWomb> favs = queryService.getFavouritesWombByUsername(username);
         if (favs != null) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(favs);
         } else {
             return ResponseEntity.notFound().build();
         }
