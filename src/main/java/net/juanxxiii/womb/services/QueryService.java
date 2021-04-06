@@ -82,13 +82,21 @@ public class QueryService {
         return usersRepository.save(newuser);
     }
 
-    public int updateUsers(Users newuser, int id) {
+    public int updateUsers(Users newUser, int id) {
         return usersRepository.findById(id).map(user -> {
-            if (newuser.getCountry() != null) {
-                Countries country = countriesRepository.findById(newuser.getCountry().getId()).orElse(null);
-                newuser.setCountry(country);
+            if (newUser.getCountry() != null) {
+                Countries country = countriesRepository.findById(newUser.getCountry().getId()).orElse(null);
+                newUser.setCountry(country);
             }
-            return usersRepository.updateUser(newuser.getEmail(), newuser.getLastname(), newuser.getName(), newuser.getPassword(), newuser.getUsername(), newuser.getId());
+            try {
+                if (!newUser.getPassword().equals(user.getPassword())) {
+
+                    newUser.setPassword(Encrypter.encryptPassword(newUser.getPassword()));
+                }
+            } catch (PasswordMalFormedException e) {
+                e.printStackTrace();
+            }
+            return usersRepository.updateUser(newUser.getEmail(), newUser.getLastname(), newUser.getName(), newUser.getPassword(), newUser.getUsername(), newUser.getId(), newUser.getCountry().getId());
         }).orElse(-1);
     }
 
@@ -306,12 +314,12 @@ public class QueryService {
         Users user = checkConstraintForeignKey(newFavourite);
         Womb womb = null;
         FavouritesWomb favouritesWomb = null;
-        if (newFavourite.getWomb() !=  null) {
+        if (newFavourite.getWomb() != null) {
             womb = wombRepository.findById(newFavourite.getWomb().getId()).orElse(null);
         }
 
         if (user != null && womb != null) {
-             favouritesWomb = favouritesWombRepository.save(newFavourite);
+            favouritesWomb = favouritesWombRepository.save(newFavourite);
         }
         return favouritesWomb;
     }
@@ -371,7 +379,7 @@ public class QueryService {
 
     public List<Womb> getWombByUser(int idUser) {
         List<Womb> wombs = new ArrayList<>();
-        Users user =usersRepository.findById(idUser).orElse(null);
+        Users user = usersRepository.findById(idUser).orElse(null);
         if (user != null) {
             wombs = wombRepository.findByUser(user);
         } else {
