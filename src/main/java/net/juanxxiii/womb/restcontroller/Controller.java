@@ -113,6 +113,21 @@ public class Controller {
         }
     }
 
+    @PostMapping("/checkPassword")
+    public ResponseEntity<?> checkPassword(@RequestBody UserLoginDto userLoginDto) {
+        Users user = queryService.getUserByUsername(userLoginDto.getUsername());
+        try {
+            if (user != null && user.getPassword().equals(Encrypter.encryptPassword(userLoginDto.getPassword()))) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.noContent().build();
+            }
+        } catch (PasswordMalFormedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @GetMapping("/find/user/{username}")
     public ResponseEntity<?> findAnUsername(@PathVariable("username") String username) {
         boolean check = false;
