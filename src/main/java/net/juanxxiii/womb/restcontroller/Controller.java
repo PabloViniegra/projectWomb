@@ -386,8 +386,8 @@ public class Controller {
     }
 
     @PostMapping("/womb")
-    public ResponseEntity<?> newWomb(@RequestBody Womb newwomb) {
-        Womb womb = queryService.saveWomb(newwomb);
+    public ResponseEntity<?> newWomb(@RequestBody Womb newWomb) {
+        Womb womb = queryService.saveWomb(newWomb);
         if (womb != null) {
             return ResponseEntity.ok(womb);
         } else {
