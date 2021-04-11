@@ -62,6 +62,16 @@ public class Controller {
         }
     }
 
+    @GetMapping("/countries/paginable")
+    public ResponseEntity<List<Countries>> findCountriesExamplePaginable(@RequestParam(defaultValue = "0") Integer pageNo,
+                                                                         @RequestParam(defaultValue = "10") Integer pageSize,
+                                                                         @RequestParam(defaultValue = "id") String sortBy) {
+        List<Countries> list = queryService.getAllCountriesPageable(pageNo, pageSize, sortBy);
+
+        return ResponseEntity.ok(list);
+
+    }
+
     //Users Mapping
     @GetMapping("/users")
     public ResponseEntity<List<Users>> getUsersList() {
@@ -359,6 +369,20 @@ public class Controller {
     @GetMapping("/womb/search/{keyword}")
     public ResponseEntity<List<Womb>> findWombsWhichContainsKeyword(@PathVariable("keyword") String keyword) {
         return ResponseEntity.ok(queryService.searchWombsContainsKeyword(keyword));
+    }
+
+    @GetMapping("/womb/search/paginable/{keyword}")
+    public ResponseEntity<List<Womb>> findWombsWhichContainsKeywordsPaginable(@PathVariable("keyword") String keyword,
+                                                                              @RequestParam(defaultValue = "0") Integer pageNo,
+                                                                              @RequestParam(defaultValue = "10") Integer pageSize,
+                                                                              @RequestParam(defaultValue = "id") String sortBy) {
+        List<Womb> list = queryService.findWombsWhichContainsKeywordsPaginable(keyword,pageNo, pageSize, sortBy);
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/womb/number/{keyword}")
+    public ResponseEntity<?> getWombNumber(@PathVariable("keyword") String keyword) {
+        return ResponseEntity.ok(queryService.getWombNumber(keyword));
     }
 
     @PostMapping("/womb")

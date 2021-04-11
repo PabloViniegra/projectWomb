@@ -8,6 +8,10 @@ import net.juanxxiii.womb.exceptions.PasswordMalFormedException;
 import net.juanxxiii.womb.exceptions.ResourceNotFoundException;
 import net.juanxxiii.womb.security.Encrypter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +34,8 @@ public class QueryService {
     private final CommentaryRepository commentaryRepository;
     private final FavouritesWombRepository favouritesWombRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final CountriesPageableRepository countriesPageableRepository;
+    private final WombPageableRepository wombPageableRepository;
 
     @Autowired
     public QueryService(CountriesRepository countriesRepository,
@@ -40,7 +46,9 @@ public class QueryService {
                         WombRepository wombRepository,
                         CommentaryRepository commentaryRepository,
                         FavouritesWombRepository favouritesWombRepository,
-                        BCryptPasswordEncoder bCryptPasswordEncoder) {
+                        BCryptPasswordEncoder bCryptPasswordEncoder,
+                        CountriesPageableRepository countriesPageableRepository,
+                        WombPageableRepository wombPageableRepository) {
         this.countriesRepository = countriesRepository;
         this.usersRepository = usersRepository;
         this.categoriesRepository = categoriesRepository;
@@ -50,6 +58,8 @@ public class QueryService {
         this.commentaryRepository = commentaryRepository;
         this.favouritesWombRepository = favouritesWombRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.countriesPageableRepository = countriesPageableRepository;
+        this.wombPageableRepository = wombPageableRepository;
     }
 
 
@@ -454,5 +464,31 @@ public class QueryService {
             });
         }
         return favouritesWomb.get();
+    }
+
+    public List<Countries> getAllCountriesPageable(Integer pageNo, Integer pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        Page<Countries> pagedResult = countriesPageableRepository.findAll(paging);
+
+        if (pagedResult.hasContent()) {
+            return pagedResult.getContent();
+        } else {
+            return new ArrayList<Countries>();
+        }
+    }
+
+    public List<Womb> findWombsWhichContainsKeywordsPaginable(String keyword, Integer pageNo, Integer pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        Page<Womb> pagedResult = wombPageableRepository.searchWomb(keyword,paging);
+        if (pagedResult.hasContent()) {
+            return pagedResult.getContent();
+        } else {
+            return new ArrayList<Womb>();
+        }
+    }
+
+
+    public int getWombNumber(String keyword) {
+        return wombRepository.searchWomb(keyword).size();
     }
 }
