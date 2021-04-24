@@ -25,7 +25,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private static final String[] AUTH_WHITE_LIST = {
             "/womb/api/countries",
-            "/womb/api/countries/**"
+            "/womb/api/countries/**",
+            "/womb/api/options"
     };
 
     public WebSecurityConfiguration(@Qualifier("userDetailServiceImpl") UserDetailsService userDetailsService, BCryptPasswordEncoder encoder) {
@@ -37,6 +38,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         httpSecurity.cors().and().csrf().disable()
                 .authorizeRequests()
                 .antMatchers(AUTH_WHITE_LIST).permitAll()
+                .antMatchers(HttpMethod.OPTIONS, "/womb/api/options").permitAll()
                 .antMatchers(HttpMethod.POST, "/womb/api/syslogin").permitAll()
                 .antMatchers(HttpMethod.POST, "/womb/api/login").permitAll()
                 .antMatchers(HttpMethod.GET, "/womb/api/find/user/**").permitAll()

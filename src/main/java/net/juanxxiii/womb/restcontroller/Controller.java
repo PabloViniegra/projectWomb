@@ -9,6 +9,7 @@ import net.juanxxiii.womb.exceptions.ResourceNotFoundException;
 import net.juanxxiii.womb.security.Encrypter;
 import net.juanxxiii.womb.services.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,6 +30,15 @@ public class Controller {
     public Controller(QueryService queryService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.queryService = queryService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
+    //Basic Configuration
+    @RequestMapping(value = "/options", method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> getOptionsRestApi() {
+        return ResponseEntity
+                .ok()
+                .allow(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH, HttpMethod.DELETE, HttpMethod.OPTIONS)
+                .build();
     }
 
     //Countries Mapping
