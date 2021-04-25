@@ -491,4 +491,23 @@ public class QueryService {
     public int getWombNumber(String keyword) {
         return wombRepository.searchWomb(keyword).size();
     }
+
+    public List<Womb> getWombsByUser(String username, Integer pageNo, Integer pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        Page<Womb> pagedResult = wombPageableRepository.getWombByUser(username,paging);
+        if (pagedResult.hasContent()) {
+            return pagedResult.getContent();
+        } else {
+            return new ArrayList<Womb>();
+        }
+    }
+
+    public int getWombNumberByUser(String username) throws ResourceNotFoundException {
+        Users user = usersRepository.findByUsername(username);
+        if (user != null) {
+            return wombRepository.findByUser(user).size();
+        } else {
+            throw new ResourceNotFoundException("User not found");
+        }
+    }
 }

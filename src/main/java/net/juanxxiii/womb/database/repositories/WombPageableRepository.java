@@ -12,4 +12,7 @@ public interface WombPageableRepository extends PagingAndSortingRepository<Womb,
 
     @Query("select w from Womb w where w.review like %?1% or w.user.name like %?1% or w.user.lastname like %?1% or w.user.username like %?1% or w.user.country.name like %?1% or w.user.country.nicename like %?1% or w.product.name like %?1% or w.product.category.name like %?1% or w.product.category.description like %?1% or w.product.brand.name like %?1%")
     Page<Womb> searchWomb(String keyword, Pageable pageable);
+
+    @Query("select w from Womb w where w.user.username = :username")
+    Page<Womb> getWombByUser(String username, Pageable pageable);
 }

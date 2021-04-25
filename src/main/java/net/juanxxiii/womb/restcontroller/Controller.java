@@ -395,6 +395,25 @@ public class Controller {
         return ResponseEntity.ok(queryService.getWombNumber(keyword));
     }
 
+    @GetMapping("/womb/user/number/{username}")
+    public ResponseEntity<?> getWombNumberByUser(@PathVariable("username") String username) {
+        try {
+            return ResponseEntity.ok(queryService.getWombNumberByUser(username));
+        } catch (ResourceNotFoundException e) {
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/womb/user/paginable/{username}")
+    public ResponseEntity<List<Womb>> getWombsByUserPaginated(@PathVariable("username") String username,
+                                                              @RequestParam(defaultValue = "0") Integer pageNo,
+                                                              @RequestParam(defaultValue = "10") Integer pageSize,
+                                                              @RequestParam(defaultValue = "id") String sortBy) {
+        List<Womb> list = queryService.getWombsByUser(username,pageNo,pageSize,sortBy);
+        return ResponseEntity.ok(list);
+    }
+
     @PostMapping("/womb")
     public ResponseEntity<?> newWomb(@RequestBody Womb newWomb) {
         Womb womb = queryService.saveWomb(newWomb);
