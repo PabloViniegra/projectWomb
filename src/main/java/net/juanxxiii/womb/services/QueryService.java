@@ -36,6 +36,7 @@ public class QueryService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final CountriesPageableRepository countriesPageableRepository;
     private final WombPageableRepository wombPageableRepository;
+    private final FavouritesWombPageableRepository favouritesWombPageableRepository;
 
     @Autowired
     public QueryService(CountriesRepository countriesRepository,
@@ -48,7 +49,8 @@ public class QueryService {
                         FavouritesWombRepository favouritesWombRepository,
                         BCryptPasswordEncoder bCryptPasswordEncoder,
                         CountriesPageableRepository countriesPageableRepository,
-                        WombPageableRepository wombPageableRepository) {
+                        WombPageableRepository wombPageableRepository,
+                        FavouritesWombPageableRepository favouritesWombPageableRepository) {
         this.countriesRepository = countriesRepository;
         this.usersRepository = usersRepository;
         this.categoriesRepository = categoriesRepository;
@@ -60,6 +62,7 @@ public class QueryService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.countriesPageableRepository = countriesPageableRepository;
         this.wombPageableRepository = wombPageableRepository;
+        this.favouritesWombPageableRepository = favouritesWombPageableRepository;
     }
 
 
@@ -431,6 +434,20 @@ public class QueryService {
         return favs;
     }
 
+    public List<FavouritesWomb> getFavouritesWombByUsernamePageable(Integer pageNo, Integer pageSize, String sortBy, String username) throws ResourceNotFoundException {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        Users user = usersRepository.findByUsername(username);
+        if (user != null) {
+            Page<FavouritesWomb> pagedResult = favouritesWombPageableRepository.findFavouritesWombByUser(user, paging);
+            if (pagedResult.hasContent()) {
+                return pagedResult.getContent();
+            } else {
+                return new ArrayList<FavouritesWomb>();
+            }
+        } else {
+            throw new ResourceNotFoundException("That user doens't exist");
+        }
+    }
     public boolean checkFavouriteUserExists(String username, int idwomb) {
         Users user = usersRepository.findByUsername(username);
         Womb womb = null;
@@ -508,6 +525,15 @@ public class QueryService {
             return wombRepository.findByUser(user).size();
         } else {
             throw new ResourceNotFoundException("User not found");
+        }
+    }
+
+    public int getNumberFavouritesWombByUser(String username) throws ResourceNotFoundException {
+        Users user = usersRepository.findByUsername(username);
+        if (user != null) {
+            return favouritesWombRepository.findAllByUser(user).size();
+        } else {
+            throw new ResourceNotFoundException("That user doesn't exist");
         }
     }
 }

@@ -498,6 +498,29 @@ public class Controller {
         }
     }
 
+    @GetMapping("/womb/favourites/pageable/{username}")
+    public ResponseEntity<List<FavouritesWomb>> getFavouritesWombByUserPaginable(@PathVariable("username") String username,
+                                                                                 @RequestParam(defaultValue = "0") Integer pageNo,
+                                                                                 @RequestParam(defaultValue = "10") Integer pageSize,
+                                                                                 @RequestParam(defaultValue = "id") String sortBy) {
+        try {
+            List<FavouritesWomb> list = queryService.getFavouritesWombByUsernamePageable(pageNo, pageSize,sortBy, username);
+            return ResponseEntity.ok(list);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+
+    }
+
+    @GetMapping("/womb/favourites/number/{username}")
+    public ResponseEntity<?> getNumberFavouritesWombByUser(@PathVariable("username") String username) {
+        try {
+            return ResponseEntity.ok(queryService.getNumberFavouritesWombByUser(username));
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/favourites/check/{username}/{idwomb}")
     public ResponseEntity<?> checkFavouriteUserExists(@PathVariable("username") String username, @PathVariable("idwomb") int idwomb) {
         boolean checkFavExists = queryService.checkFavouriteUserExists(username,idwomb);
