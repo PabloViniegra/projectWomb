@@ -26,7 +26,12 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final String[] AUTH_WHITE_LIST = {
             "/womb/api/countries",
             "/womb/api/countries/**",
-            "/womb/api/options"
+            "/womb/api/options",
+            "/v2/api-docs/**",
+            "/swagger.json",
+            "/swagger-ui.html",
+            "/swagger-resources/**",
+            "/webjars/**"
     };
 
     public WebSecurityConfiguration(@Qualifier("userDetailServiceImpl") UserDetailsService userDetailsService, BCryptPasswordEncoder encoder) {
