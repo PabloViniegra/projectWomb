@@ -2,7 +2,7 @@
 version: '3'
 
 services:
-  db:
+  db-womb:
     container_name: db-womb
     image: mysql:latest
     environment:
@@ -15,7 +15,23 @@ services:
     expose:
       - '3306'
     volumes:
-      -  db-womb:/var/lib/mysql
+      - data:/var/lib/mysql
+    networks:
+      - backend
+  api-womb:
+    container_name: api-womb
+    image: womb
+    ports:
+      - '8080:8080'
+    expose:
+      - '8080'
+    depends_on:
+      - db-womb
+    volumes:
+      - docker/api-womb
+    networks:
+      - backend
 volumes:
-  db-womb:
-
+  data:
+networks:
+  backend:          
