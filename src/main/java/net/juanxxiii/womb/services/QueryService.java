@@ -228,13 +228,12 @@ public class QueryService {
             newWomb.setProduct(products);
         }
         checkWombUserForeignConstraint(newWomb);
-        Womb womb = wombRepository.save(newWomb);
-        return womb;
+        return wombRepository.save(newWomb);
     }
 
     private void checkWombUserForeignConstraint(Womb newWomb) {
         if (newWomb.getUser() != null) {
-            Users user = null;
+            Users user;
             System.out.println(newWomb.getUser().getId());
             user = usersRepository.findByUsername(newWomb.getUser().getUsername());
             if (user == null) {
@@ -351,29 +350,17 @@ public class QueryService {
 
     public boolean checkUserExist(UserLoginDto userLoginDto) throws PasswordMalFormedException {
         Users users = usersRepository.findByUsername(userLoginDto.getUsername());
-        if (users != null && users.getPassword().equals(Encrypter.encryptPassword(userLoginDto.getPassword()))) {
-            return true;
-        } else {
-            return false;
-        }
+        return users != null && users.getPassword().equals(Encrypter.encryptPassword(userLoginDto.getPassword()));
     }
 
     public boolean findUser(String username) {
         Users user = usersRepository.findByUsername(username);
-        if (user != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return user != null;
     }
 
     public boolean findEmail(String email) {
         Users user = usersRepository.findByEmail(email);
-        if (user != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return user != null;
     }
 
     public List<Womb> getLastWombsList() {
@@ -442,7 +429,7 @@ public class QueryService {
             if (pagedResult.hasContent()) {
                 return pagedResult.getContent();
             } else {
-                return new ArrayList<FavouritesWomb>();
+                return new ArrayList<>();
             }
         } else {
             throw new ResourceNotFoundException("That user doens't exist");
@@ -450,7 +437,7 @@ public class QueryService {
     }
     public boolean checkFavouriteUserExists(String username, int idwomb) {
         Users user = usersRepository.findByUsername(username);
-        Womb womb = null;
+        Womb womb;
         AtomicBoolean check = new AtomicBoolean(false);
         try {
             womb = wombRepository.findById(idwomb).orElseThrow(ResourceNotFoundException::new);
@@ -490,7 +477,7 @@ public class QueryService {
         if (pagedResult.hasContent()) {
             return pagedResult.getContent();
         } else {
-            return new ArrayList<Countries>();
+            return new ArrayList<>();
         }
     }
 
@@ -500,7 +487,7 @@ public class QueryService {
         if (pagedResult.hasContent()) {
             return pagedResult.getContent();
         } else {
-            return new ArrayList<Womb>();
+            return new ArrayList<>();
         }
     }
 
@@ -515,7 +502,7 @@ public class QueryService {
         if (pagedResult.hasContent()) {
             return pagedResult.getContent();
         } else {
-            return new ArrayList<Womb>();
+            return new ArrayList<>();
         }
     }
 

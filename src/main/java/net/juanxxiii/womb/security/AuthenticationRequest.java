@@ -4,8 +4,6 @@ package net.juanxxiii.womb.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import net.juanxxiii.womb.database.entities.UserLoginSystem;
-import net.juanxxiii.womb.database.entities.Users;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

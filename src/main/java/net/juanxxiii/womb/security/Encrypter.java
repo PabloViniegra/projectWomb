@@ -24,16 +24,10 @@ public class Encrypter {
             cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
             byte[] encrypted = cipher.doFinal(pass.getBytes(StandardCharsets.UTF_8));
             return DatatypeConverter.printBase64Binary(encrypted);
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | InvalidKeyException e) {
             e.printStackTrace();
         } catch (BadPaddingException e) {
             throw new PasswordMalFormedException("password is incorrect");
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -45,16 +39,10 @@ public class Encrypter {
             cipher.init(Cipher.DECRYPT_MODE,secretKeySpec);
             byte[] encrypted = cipher.doFinal(DatatypeConverter.parseBase64Binary(encrypt));
             return new String(encrypted);
-         } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
+         } catch (NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | InvalidKeyException e) {
             e.printStackTrace();
         } catch (BadPaddingException e) {
             throw  new PasswordMalFormedException("password is not the same");
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
         }
         return null;
     }

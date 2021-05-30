@@ -150,7 +150,7 @@ public class Controller {
 
     @GetMapping("/find/user/{username}")
     public ResponseEntity<?> findAnUsername(@PathVariable("username") String username) {
-        boolean check = false;
+        boolean check;
         check = queryService.findUser(username);
         if (check) {
             return ResponseEntity.ok().build();
@@ -161,7 +161,7 @@ public class Controller {
 
     @GetMapping("/find/email/{email}")
     public ResponseEntity<?> findEmail(@PathVariable("email") String email) {
-        boolean check = false;
+        boolean check;
         check = queryService.findEmail(email);
         if (check) {
             return ResponseEntity.ok().build();

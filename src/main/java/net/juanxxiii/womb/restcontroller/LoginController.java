@@ -3,16 +3,10 @@ package net.juanxxiii.womb.restcontroller;
 import lombok.extern.java.Log;
 import net.juanxxiii.womb.common.utils.Copy;
 import net.juanxxiii.womb.database.entities.UserLoginSystem;
-import net.juanxxiii.womb.database.entities.Users;
 import net.juanxxiii.womb.database.repositories.UserLoginRepository;
-import net.juanxxiii.womb.exceptions.PasswordMalFormedException;
-import net.juanxxiii.womb.exceptions.ResourceNotFoundException;
-import net.juanxxiii.womb.security.Encrypter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Objects;
 
 @RestController
 @RequestMapping( "/womb/system/users")

@@ -19,8 +19,9 @@ spec:
         io.kompose.service: api-womb
     spec:
       containers:
-        - image: ' '
+          image: ' '
           name: api-womb
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           resources: {}
