@@ -21,7 +21,7 @@ spec:
       containers:
           image: ' '
           name: api-womb
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           resources: {}

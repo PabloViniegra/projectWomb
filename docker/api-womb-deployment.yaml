@@ -25,10 +25,12 @@ spec:
         io.kompose.service: api-womb
     spec:
       containers:
-        - image: womb
+        - image: pabloviniegra/womb
           name: api-womb
           ports:
             - containerPort: 8080
           resources: {}
       restartPolicy: Always
+      imagePullSecrets:
+      - name: the-secret
 status: {}
