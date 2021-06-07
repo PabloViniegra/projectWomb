@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-
+//Return an authorization if authentication is correct
 public class Authorization extends BasicAuthenticationFilter {
     public Authorization(AuthenticationManager authenticationManager) {
         super(authenticationManager);

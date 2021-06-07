@@ -7,7 +7,7 @@ import net.juanxxiii.womb.database.repositories.UserLoginRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
+//Manage Access for tokens
 @RestController
 @RequestMapping( "/womb/system/users")
 @CrossOrigin

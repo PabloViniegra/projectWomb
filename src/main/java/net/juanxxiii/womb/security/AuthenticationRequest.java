@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-
+//Manage user's authentication
 public class AuthenticationRequest extends UsernamePasswordAuthenticationFilter {
     private AuthenticationManager authenticationManager;
 
