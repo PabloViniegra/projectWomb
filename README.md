@@ -1,4 +1,4 @@
-# proyectWomb
+# PROYECTO WOMB
 Trabajo de Final de Grado Superior de Desarrollo de Aplicaciones Multiplataforma. Consiste en una web sobre valoración de productos.
 
 # REQUISITOS
