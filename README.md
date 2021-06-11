@@ -3,10 +3,10 @@ Trabajo de Final de Grado Superior de Desarrollo de Aplicaciones Multiplataforma
 
 # REQUISITOS
 
-* Instalación previa de Docker en su sistema operativo. Podrá encontrar la información aquí [Documentación Docker] (https://docs.docker.com/desktop/). Deberá elegir el Sistema Operativo que está empleando la máquina para elegir la configuración idónea de Docker. La recomendación es que instale Docker en una distribución de Linux.
-* Es recomendable instalar un Sistema Gestor de Base de Datos. Puede ser cualquiera o incluso la propia terminal de MySQL [Datagrip] (https://www.jetbrains.com/help/datagrip/installation-guide.html)
+* Instalación previa de Docker en su sistema operativo. Podrá encontrar la información aquí [Documentación Docker](https://docs.docker.com/desktop/). Deberá elegir el Sistema Operativo que está empleando la máquina para elegir la configuración idónea de Docker. La recomendación es que instale Docker en una distribución de Linux.
+* Es recomendable instalar un Sistema Gestor de Base de Datos. Puede ser cualquiera o incluso la propia terminal de MySQL [Datagrip](https://www.jetbrains.com/help/datagrip/installation-guide.html)
 * Una vez disponga de esto deberá levantar una base de datos en el puerto 3306 y ejecutar el script.sql que viene en la raíz del directorio. Ello nos proveerá de las tablas y relaciones que necesitamos para Womb.
-* También deberá haber instalado Maven para el empaquetamiento del proyecto y la posterior construcción de la imagen para Docker [Maven] (https://maven.apache.org/install.html)
+* También deberá haber instalado Maven para el empaquetamiento del proyecto y la posterior construcción de la imagen para Docker [Maven](https://maven.apache.org/install.html)
 
 
 # PASOS A SEGUIR
